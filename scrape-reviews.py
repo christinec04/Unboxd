@@ -12,16 +12,14 @@ def get_url(username, page_number):
 
 username = input('enter letterboxd username (not display name): ') 
 
-drivers = {
-        'firefox': webdriver.Firefox,
-        'chrome': webdriver.Chrome,
-        }
-browser = input(f'enter browser to use from {list(drivers.keys())}: ')
-driver = drivers[browser]()
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+driver = webdriver.Chrome(options)
 
 data = []
 page_number = 1
 while True:
+    print(f'scraping page {page_number}...')
     driver.get(get_url(username, page_number))
     reviews = driver.find_elements(By.CSS_SELECTOR, '[data-object-name="review"]')
     if not reviews:
@@ -45,6 +43,7 @@ while True:
     page_number += 1
 driver.quit()
 
+print('saving data...')
 with open(f'./reviews/{username}.csv', 'w') as dataset:
     col_headers = 'name,user rating,user review\n'
     dataset.write(col_headers)
