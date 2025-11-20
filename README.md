@@ -15,3 +15,4 @@
   - Windows: `.\venv\Script\activate`
   - Mac/Linux: `source ./venv/bin/activate`
 - Download requirements: `pip install -r requirements.txt`
+- Install `npm axios`
