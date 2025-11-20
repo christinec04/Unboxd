@@ -25,9 +25,14 @@ while True:
     if not reviews:
         break
     for review in reviews:
-        reveal_buttons = driver.find_elements(By.CLASS_NAME, 'reveal')
-        for button in reveal_buttons:
-            click_element(driver, button)
+        # reveal all spoilers / truncated text
+        while True:
+            try:
+                button = review.find_element(By.CLASS_NAME, 'reveal')
+                click_element(driver, button)
+            except:
+                break  # no more reveal buttons in this review
+
         name_parent_element = review.find_element(By.CLASS_NAME, 'name')
         name = convert_to_csv_string(name_parent_element.find_element(By.TAG_NAME, 'a').text)
         try:
@@ -44,7 +49,7 @@ while True:
 driver.quit()
 
 print('saving data...')
-with open(f'./reviews/{username}.csv', 'w') as dataset:
+with open(f'./reviews/{username}.csv', 'w', encoding='utf-8') as dataset:
     col_headers = 'name,user rating,user review\n'
     dataset.write(col_headers)
     for row in data:
