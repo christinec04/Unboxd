@@ -1,10 +1,9 @@
-import { useState } from 'react'
-import { FieldInput } from './components/FieldInput';
+import { Input } from './pages/InputPage';
 
 const App = () => {
   return (
     <main>
-      <FieldInput />
+      <Input />
     </main>
   );
 };

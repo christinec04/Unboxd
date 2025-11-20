@@ -20,7 +20,7 @@ def scrape_reviews(username):
     page_number = 1
     while True:
         print(f'scraping page {page_number}...')
-        driver.get(get_url(username, page_number))
+        driver.get(get_url(username, page_number)) # need to check if username exists
         reviews = driver.find_elements(By.CSS_SELECTOR, '[data-object-name="review"]')
         if not reviews:
             break
