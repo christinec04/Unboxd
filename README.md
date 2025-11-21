@@ -1,23 +1,18 @@
 # Project-ez2-ermili-cch8-dvchavan
 
-## how to scrape letterboxd reviews
+## Backend Setup
+- Install [Google Chrome](https://www.google.com/chrome/) to use for scraping
+- Install [uv](https://docs.astral.sh/uv/getting-started/installation/) for handling python versions, packages, and virtual environments
+- `cd backend`
+- To run the backend: `uv run uvicorn main:app`
 
-- install chrome
-- download selenium: `pip install selenium`
-- run `scrape-reviews.py`
-- when prompted, enter a letterboxd username to use for scraping
-- wait till the program terminates
-- find the scraped reviews in `./reviews/username.csv`, where username is the same letterboxd username from earlier
+### Scraping Letterboxd Reviews
 
-## Setup
-- Setup virtual environment: run `python -m venv venv`
-- Activate virtual environment:
-  - Windows: `.\venv\Script\activate`
-  - Mac/Linux: `source ./venv/bin/activate`
-- Download requirements: `pip install -r requirements.txt`
-- Install `npm install axios`
-`npm install tailwindcss @tailwindcss/vite`
+- To run the scraper: `uv run scrape_reviews.py username`, where `username` is the letterboxd username to use for scraping
+- After the program terminates, find the scraped reviews at `./reviews/username.csv`, where `username` is the same letterboxd username used earlier
 
-## To run
-- Cd into `frontend` and run `npm run dev`
-- Cd into `backend` and run `python main.py`
+## Frontend Setup
+- Install [Node.js](https://nodejs.org/en/download) to get npm
+- `cd frontend`
+- To install all dependencies `npm install`
+- To run the frontend `npm run dev`
