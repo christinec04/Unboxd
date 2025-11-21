@@ -8,7 +8,8 @@ from models import Status, UsernameRequest, MovieList
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://192.168.11.1:3000"
 ]
 
 app.add_middleware(
