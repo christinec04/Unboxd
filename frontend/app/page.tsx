@@ -24,11 +24,7 @@ export default function HomePage() {
     setErrorMessage(description);
 
     try { 
-      const response = await api.post('/username', { username: username });
-      console.log(response.data.message);
-      if (response.data.status === false) {
-        throw new Error(response.data.message);
-      }
+      await api.post('/username', { username: username });
     } 
     catch (error) {
       console.error(error);

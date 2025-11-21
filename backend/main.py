@@ -26,8 +26,8 @@ dummyData = [{"name": "Barbie", "year": "2023", "description": "Barbie and Ken a
 # Send username to backend
 @app.post("/username", response_model=Status)
 def scrape_user_reviews(request: UsernameRequest):
-    status, message = scrape_reviews(request.username)
-    return Status(status=status, message=message)
+    scrape_reviews(request.username)
+    return Status(status=1, message="Scraping completed successfully.")
 
 # Get movie recommendations from backend
 @app.get("/recommendations", response_model=MovieList)

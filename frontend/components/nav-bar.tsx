@@ -46,7 +46,7 @@ export function NavBar(){
           { /* Navigation Items */ }
           <div>
             {navItems.map((item) => (
-              <Button variant="link" onClick={() => window.open(item.href, "_self")}>{item.label}</Button>
+              <Button key={item.href} variant="link" onClick={() => window.open(item.href, "_self")}>{item.label}</Button>
             ))}
           </div>
 
