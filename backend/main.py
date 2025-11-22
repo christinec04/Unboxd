@@ -43,7 +43,7 @@ def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
     status[request.username] = Status.starting
     background_tasks.add_task(system, request.username)
     # uncomment here to test displaying the movies on the frontend
-    # recommendations[username] = dummyData
+    # recommendations[request.username] = dummyData
     return
 
 @app.get("/status/", response_model=StatusResponse)
