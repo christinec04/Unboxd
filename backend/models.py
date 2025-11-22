@@ -1,6 +1,9 @@
 from enum import Enum
 from pydantic import BaseModel
 
+class UsernameRequest(BaseModel):
+    username: str
+
 class Status(str, Enum):
     starting = 'starting'
     scraping_reviews = 'scraping reviews'
@@ -18,5 +21,5 @@ class Movie(BaseModel):
     description: str
     posterURL: str
     
-class RecommendationResponse(BaseModel):
+class MoviesResponse(BaseModel):
     movies: list[Movie]

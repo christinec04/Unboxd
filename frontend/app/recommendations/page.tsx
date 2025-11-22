@@ -12,8 +12,9 @@ export default function RecommendationsPage() {
 
   useEffect(() => {
     async function fetchMovies() {
-      const res = await api.get(`/movies?username=${username}`);
+      const res = await api.get(`/movies/?username=${username}`);
       setMovies(res.data);
+      console.log(res.data)
     }
     fetchMovies();
   }, [username]);
