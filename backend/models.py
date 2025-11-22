@@ -1,6 +1,8 @@
 from enum import Enum
-from typing import List
 from pydantic import BaseModel
+
+class UsernameRequest(BaseModel):
+    username: str
 
 class Status(str, Enum):
     starting = 'starting'
@@ -10,11 +12,14 @@ class Status(str, Enum):
     finding_recommendation = 'finding recommendations'
     finished = 'finished'
 
-class ReviewRequest(BaseModel):
-    username: str
-
 class StatusResponse(BaseModel):
     status: Status
     
-class RecommendationResponse(BaseModel):
-    movies: List[str]
+class Movie(BaseModel):
+    name: str
+    year: str
+    description: str
+    posterURL: str
+    
+class MoviesResponse(BaseModel):
+    movies: list[Movie]

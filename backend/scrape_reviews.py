@@ -11,17 +11,17 @@ def click_element(driver, element):
 def get_url(username: str, page_number: int):
     return f'https://letterboxd.com/{username}/reviews/films/page/{page_number}/'
 
-def scrape_reviews(username: str) -> pd.DataFrame:
-    print('starting scraping')
+def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
+    if print_status:
+        print('starting scraping')
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     driver = webdriver.Chrome(options)
-    data = dict()
-    for col_header in ['name', 'user rating', 'user review']:
-        data[col_header] = []
+    data = { 'name': [], 'user rating': [], 'user review': [] }
     page_number = 1
     while True:
-        print(f'scraping page {page_number}...')
+        if print_status:
+            print(f'scraping page {page_number}...')
         driver.get(get_url(username, page_number))
         reviews = driver.find_elements(By.CSS_SELECTOR, '[data-object-name="review"]')
         if len(reviews) == 0:
@@ -52,12 +52,12 @@ def scrape_reviews(username: str) -> pd.DataFrame:
             user_review = user_review_element.text
             data['user review'].append(user_review)
         page_number += 1
-    print('finished scraping')
+    if print_status:
+        print('finished scraping')
     driver.quit()
     return pd.DataFrame.from_dict(data)
 
 if __name__ == "__main__":
     username = sys.argv[1]
-    data = scrape_reviews(username)
+    data = scrape_reviews(username, print_status=True)
     data.to_csv(create_path([os.getcwd(), 'reviews', f'{username}.csv']), index=False)
-
