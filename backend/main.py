@@ -1,6 +1,5 @@
 import uvicorn
 from typing import Dict, List
-from threading import Lock
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,30 +21,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-lock = Lock()
 status: Dict[str, Status] = dict()
 recommendations: Dict[str, List[str]] = dict()
 
 def system(username): 
     status[username] = Status.scraping_reviews
-    data = scrape_reviews(username)
+    df = scrape_reviews(username)
     status[username] = Status.preprocessing_data
-    data = sentiment_analysis(data)
+    new_df = sentiment_analysis(df)
+    status[username] = Status.finished
     # TODO add more tasks
 
-@app.post("/usernames/{username}", status_code=HTTPStatus.ACCEPTED)
+@app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(username: str, background_tasks: BackgroundTasks):
     status[username] = Status.starting
     background_tasks.add_task(system, username)
     return
 
-@app.post("/status/{username}")
+@app.get("/status/")
 def check_status(username: str) -> StatusResponse:
     if username not in status:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
     return StatusResponse(status=status[username])
 
-@app.post("/recommendations/{username}")
+@app.get("/recommendations/")
 def recommend_movies(username: str) -> RecommendationResponse:
     if username not in recommendations:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)

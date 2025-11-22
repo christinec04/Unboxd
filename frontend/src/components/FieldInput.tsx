@@ -14,8 +14,11 @@ export function FieldInput() {
     event.preventDefault();
     if (username) {
       try {
-        await api.post('/scrapeReviews', { username: username });
-        console.log("Finished scraping successfully!");
+        await api.post(`/usernames/?username=${username}`);
+        setInterval(async () => {
+          const response = await api.get(`/status/?username=${username}`);
+          console.log(JSON.stringify(response.data));
+        }, 500);
       } catch (error) {
         console.error("Error sending username to backend", error);
       }
@@ -25,20 +28,20 @@ export function FieldInput() {
   return (
     <div className="w-full max-w-md">
       <form onSubmit={handleSubmit}>
-          <Field>
-            <FieldLabel htmlFor="username">Username</FieldLabel>
-            <Input 
-              id="username"
-              type="text"
-              placeholder="username"
-              value={username}                
-              onChange={(e) => setUsername(e.target.value)} 
-            />
-            <FieldDescription>
-              Please enter your Letterboxd username
-            </FieldDescription>
-          </Field>
-        </form>
+        <Field>
+          <FieldLabel htmlFor="username">Username</FieldLabel>
+          <Input
+            id="username"
+            type="text"
+            placeholder="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <FieldDescription>
+            Please enter your Letterboxd username
+          </FieldDescription>
+        </Field>
+      </form>
     </div>
   )
 }

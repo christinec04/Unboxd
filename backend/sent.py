@@ -18,7 +18,9 @@ def is_valid_review(review):
 
     stopwords = {"and", "the", "this", "that", "is", "a", "i"} 
     words = [w for w in text.lower().split() if w not in stopwords]
-    return len(words) < 3
+    if len(words) < 3:
+        return False
+    return True
 
 
 def sentiment_analysis(df: pd.DataFrame) -> pd.DataFrame:
@@ -27,7 +29,7 @@ def sentiment_analysis(df: pd.DataFrame) -> pd.DataFrame:
     df['is_valid'] = df['user review'].apply(is_valid_review)
     df = df[df['is_valid']].reset_index(drop=True)
 
-    reviews = df['user review'].astype(str)
+    reviews = df['user review']
 
     df['negative'] = [analyzer.polarity_scores(r)['neg'] for r in reviews]
     df['neutral'] = [analyzer.polarity_scores(r)['neu'] for r in reviews]

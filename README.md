@@ -9,7 +9,13 @@
 ### Scraping Letterboxd Reviews
 
 - To run the scraper: `uv run scrape_reviews.py username`, where `username` is the letterboxd username to use for scraping
-- After the program terminates, find the scraped reviews at `./reviews/username.csv`, where `username` is the same letterboxd username used earlier
+- After the program terminates, find the scraped reviews at `./reviews/username.csv`, where `username` is the same one from above
+
+### Performing Sentiment Analysis
+
+- Ensure the reviews to perform analysis on are at `./reviews/username.csv` 
+- To run the analysis: `uv run sent.py username`, where `username` is the same one from above
+- After the program terminates, find the reviews and their sentiment analysis at `./processed_reviews/username.csv`, where `username` is the same one from above
 
 ## Frontend Setup
 - Install [Node.js](https://nodejs.org/en/download) to get npm
