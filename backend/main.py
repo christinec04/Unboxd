@@ -1,12 +1,12 @@
 import uvicorn
-import sqlite3
 from typing import Dict, List
 from threading import Lock
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
-from scrape_reviews import scrape_reviews, save_data_to_csv
-from models import ReviewRequest, Status, StatusResponse, RecommendationResponse
+from models import Status, StatusResponse, RecommendationResponse
+from scrape_reviews import scrape_reviews 
+from sent import sentiment_analysis
 
 app = FastAPI()
 
@@ -22,14 +22,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/scrapeReviews")
-def scrape_user_reviews(request: ReviewRequest):
-    data = scrape_reviews(request.username)
-    save_data_to_csv(request.username, data)
-    return
-    return {"message": f"Scraping reviews for user {request.username} initiated."}
-
-# TODO possibly replace with sqlite db
 lock = Lock()
 status: Dict[str, Status] = dict()
 recommendations: Dict[str, List[str]] = dict()
@@ -37,7 +29,9 @@ recommendations: Dict[str, List[str]] = dict()
 def system(username): 
     status[username] = Status.scraping_reviews
     data = scrape_reviews(username)
-    # TODO add every task
+    status[username] = Status.preprocessing_data
+    data = sentiment_analysis(data)
+    # TODO add more tasks
 
 @app.post("/usernames/{username}", status_code=HTTPStatus.ACCEPTED)
 def init_system(username: str, background_tasks: BackgroundTasks):
@@ -52,7 +46,7 @@ def check_status(username: str) -> StatusResponse:
     return StatusResponse(status=status[username])
 
 @app.post("/recommendations/{username}")
-async def recommend_movies(username: str) -> RecommendationResponse:
+def recommend_movies(username: str) -> RecommendationResponse:
     if username not in recommendations:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
     return RecommendationResponse(movies=recommendations[username])

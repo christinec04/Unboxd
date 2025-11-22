@@ -1,7 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import sys
-from typing import List, Tuple
+import pandas as pd
+import os
+from utils import create_path
 
 def click_element(driver, element):
     driver.execute_script('arguments[0].click();', element)
@@ -9,25 +11,14 @@ def click_element(driver, element):
 def get_url(username: str, page_number: int):
     return f'https://letterboxd.com/{username}/reviews/films/page/{page_number}/'
 
-def to_csv_string(string: str):
-    string = string.replace('"', "'")
-    return f'"{string}"'
-
-def save_data_to_csv(username: str, data: List[Tuple[str, int, str]]):
-    dataset = open(f'./reviews/{username}.csv', 'w', encoding='utf-8')
-    col_headers = 'name,user rating,user review\n'
-    dataset.write(col_headers)
-    for row in data:
-        new_row = (to_csv_string(val) if isinstance(val, str) else str(val) for val in row)
-        dataset.write(f"{','.join(new_row)}\n")
-    dataset.close()
-
-def scrape_reviews(username: str) -> List[Tuple[str, int, str]]:
+def scrape_reviews(username: str) -> pd.DataFrame:
     print('starting scraping')
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     driver = webdriver.Chrome(options)
-    data = []
+    data = dict()
+    for col_header in ['name', 'user rating', 'user review']:
+        data[col_header] = []
     page_number = 1
     while True:
         print(f'scraping page {page_number}...')
@@ -36,33 +27,37 @@ def scrape_reviews(username: str) -> List[Tuple[str, int, str]]:
         if len(reviews) == 0:
             break
         for review in reviews:
-            # press all 'more' links to expand all the reviews 
-            for button in review.find_elements(By.CLASS_NAME, 'reveal'):
-                try:
-                    click_element(driver, button)
-                except:
-                    continue
-            name_parent_element = review.find_element(By.CLASS_NAME, 'name')
-            name = name_parent_element.find_element(By.TAG_NAME, 'a').text
-            # scrape the user's rating if given
+            try:
+                reveal_spoiler_button = review.find_element(By.CSS_SELECTOR, '[data-js-trigger="spoiler.reveal"]')
+                click_element(driver, reveal_spoiler_button)
+            except:
+                pass
+            try:
+                show_more_button = review.find_element(By.CLASS_NAME, 'reveal')
+                click_element(driver, show_more_button)
+            except:
+                pass
             try:
                 user_rating_symbols = review.find_element(By.CLASS_NAME, 'rating').text.strip()
                 user_rating = user_rating_symbols.count('★') + \
                         0.5 * user_rating_symbols.count('½')
-            # default to 0 which cannot be used as a rating in letterboxd
             except:
+                # default to 0 which cannot be used as a rating in letterboxd
                 user_rating = 0
-            # TODO deal with spoiler warning in review - username: maorimovies
+            data['user rating'].append(user_rating)
+            name_parent_element = review.find_element(By.CLASS_NAME, 'name')
+            name = name_parent_element.find_element(By.TAG_NAME, 'a').text
+            data['name'].append(name)
             user_review_element = review.find_element(By.CLASS_NAME, 'js-review-body')
             user_review = user_review_element.text
-            data.append((name, user_rating, user_review))
+            data['user review'].append(user_review)
         page_number += 1
     print('finished scraping')
     driver.quit()
-    return data
+    return pd.DataFrame.from_dict(data)
 
 if __name__ == "__main__":
     username = sys.argv[1]
     data = scrape_reviews(username)
-    save_data_to_csv(username, data)
+    data.to_csv(create_path([os.getcwd(), 'reviews', f'{username}.csv']), index=False)
 
