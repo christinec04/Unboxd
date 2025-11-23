@@ -20,7 +20,7 @@ export default function RecommendationsPage() {
   }, [username]);
 
   return (
-    <div>
+    <div className="min-h-screen bg-background">
       <NavBar />
       <h1>Recommendations for {username}</h1>
       <ul>

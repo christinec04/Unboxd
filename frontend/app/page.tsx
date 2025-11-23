@@ -6,6 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "next/navigation";
 import { FieldDescription } from "@/components/ui/field"
 import { TypeAnimation } from 'react-type-animation';
+import { ModeToggle } from '@/components/theme-toggle';
 import api from "@/app/api/index";
 
 export default function HomePage() {
@@ -38,31 +39,42 @@ export default function HomePage() {
   };
 
   return (
-    <div className="@container grid h-screen place-items-center">
-      <div className="w-full max-w-md flex flex-col gap-5">
+    <div className="min-h-screen bg-background flex flex-col">
+      <div className="flex-1 flex flex-col p-8">
 
-        <TypeAnimation
-          sequence={['Movie Recommendation System']}
-          wrapper="span"
-          style={{ fontSize: '2em', display: 'inline-block' }}
-        />
+        {/* Header */}
+        <div className="flex justify-end items-center">
+          <ModeToggle />
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <InputGroup>
-            <InputGroupInput id="username"
-              type="text"
-              placeholder="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="off" />
+        {/* Main Content */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-lg space-y-8">
+            <TypeAnimation
+              sequence={['Movie Recommendation System']}
+              wrapper="span"
+              style={{ fontSize: '2em', display: 'inline-block' }}
+            />
 
-            <InputGroupAddon align="inline-end">
-              {loading && <Spinner />}
-            </InputGroupAddon>
-          </InputGroup>
-        </form>
+            <form onSubmit={handleSubmit}>
+              <InputGroup>
+                <InputGroupInput id="username"
+                  type="text"
+                  placeholder="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="off" />
 
-        <FieldDescription className="ml-2">{errorMessage}</FieldDescription>
+                <InputGroupAddon align="inline-end">
+                  {loading && <Spinner />}
+                </InputGroupAddon>
+              </InputGroup>
+            </form>
+
+            <FieldDescription className="ml-2">{errorMessage}</FieldDescription>
+          </div>
+        </div>
+
       </div>
     </div>
   );
