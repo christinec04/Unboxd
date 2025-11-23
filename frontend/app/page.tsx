@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { FieldDescription } from "@/components/ui/field"
 import { TypeAnimation } from 'react-type-animation';
 import { ModeToggle } from '@/components/theme-toggle';
+import { useTheme } from "next-themes";
+import Wave from 'react-wavify'
 import api from "@/app/api/index";
 
 export default function HomePage() {
@@ -14,6 +16,7 @@ export default function HomePage() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { theme } = useTheme();
   const [errorMessage, setErrorMessage] = useState(description);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,8 +43,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex-1 flex flex-col p-8">
-
+      
+      <div className="flex-1 flex flex-col p-8 z-50">
         {/* Header */}
         <div className="flex justify-end items-center">
           <ModeToggle />
@@ -74,8 +77,34 @@ export default function HomePage() {
             <FieldDescription className="ml-2">{errorMessage}</FieldDescription>
           </div>
         </div>
-
       </div>
+      
+      {/* Wave background */}
+      <Wave
+        fill="url(#gradient)"
+        paused={false}
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 0,
+        }}
+        options={{
+          height: 20,
+          amplitude: 20,
+          speed: 0.15,
+          points: 3,
+        }}
+      >
+        <defs>
+          <linearGradient id="gradient" gradientTransform="rotate(90)">
+            <stop offset="10%"  stopColor={theme === "light" ? "var(--color-blue-300)" : "var(--color-sky-700"} />
+            <stop offset="90%" stopColor={theme === "light" ? "var(--color-blue-100)" : "var(--color-slate-800"} />
+          </linearGradient>
+        </defs>
+      </Wave>
+
     </div>
   );
 }

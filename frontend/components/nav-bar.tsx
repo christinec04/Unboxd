@@ -6,35 +6,13 @@ import {
 } from "@/components/ui/input-group"
 import { ModeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import api from "@/app/api/index";
 
 const navItems = [
   { href: "/", label: "Home" },
   { href: "https://github.iu.edu/B365-Fall2025/Project-ez2-ermili-cch8-dvchavan", label: "Docs", isExternal: true },
 ]
 
-export function NavBar(){
-  const [username, setUsername] = useState("");
-
-  // Submit username to backend
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!username) { return; }
-
-    try {
-      await api.post('/usernames/', { username: username });
-    }
-    catch (error) {
-      console.error(error);
-      return;
-    }
-
-    // Navigate to next page
-    router.push(`/recommendations?username=${username}`);
-  };
-
+export function NavBar({ username, setUsername, handleSubmit }){
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background-55 backdrop-blur-sm">
       <div className="container mx-auto p-4 sm:px-6 lg:px-8 flex justify-between gap-4">
