@@ -7,13 +7,17 @@ import {
 
 export function NotFound() {
   return (
-    <Empty>
-      <EmptyHeader>
-        <EmptyTitle>User Not Found</EmptyTitle>
-        <EmptyDescription>
-          Try searching for another username
-        </EmptyDescription>
-      </EmptyHeader>
-    </Empty>
+    <section className="py-24 relative overflow-hidden flex flex-1 items-end justify-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <Empty>
+          <EmptyHeader>
+            <EmptyTitle>User Not Found</EmptyTitle>
+            <EmptyDescription>
+              Try searching for another username
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      </div>
+    </section>
   )
 }

@@ -60,7 +60,7 @@ export default function HomePage() {
             />
 
             <form onSubmit={handleSubmit}>
-              <InputGroup>
+              <InputGroup className="bg-accent/55 backdrop-blur-md">
                 <InputGroupInput id="username"
                   type="text"
                   placeholder="username"

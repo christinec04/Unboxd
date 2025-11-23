@@ -14,7 +14,7 @@ const navItems = [
 
 export function NavBar({ username, setUsername, handleSubmit }){
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background-55 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/55 backdrop-blur-md">
       <div className="container mx-auto p-4 sm:px-6 lg:px-8 flex justify-between gap-4">
         <div className="flex flex-wrap gap-y-4">
           { /* Navigation Links */ }
@@ -24,7 +24,7 @@ export function NavBar({ username, setUsername, handleSubmit }){
 
           { /* Username Input */ }
           <form onSubmit={handleSubmit} className="flex-1 min-w-sm pl-4">
-            <InputGroup>
+            <InputGroup className="bg-accent/55 backdrop-blur-md">
               <InputGroupInput 
                 className="w-full"
                 id="username"

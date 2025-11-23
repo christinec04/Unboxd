@@ -5,12 +5,18 @@ import { useSearchParams } from "next/navigation";
 import api from "@/app/api/index";
 import { NavBar } from "@/components/nav-bar";
 import { useRouter } from "next/navigation";
+import { Loading } from "@/components/result/progress";
+import { Result } from "@/components/result/result";
+import { NotFound } from "@/components/result/not-found";
 
 export default function RecommendationsPage() {
   const searchParams = useSearchParams();
   const [username, setUsername] = useState(searchParams.get("username"));
   const [movies, setMovies] = useState([]);
+  const router = useRouter();
+  const [status, setStatus] = useState<'loading' | 'notfound' | 'success'>('success');
 
+  // On page load, fetch recommended movies
   useEffect(() => {
     async function fetchMovies() {
       const res = await api.get(`/movies/?username=${username}`);
@@ -40,15 +46,13 @@ export default function RecommendationsPage() {
   
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
+
+      {status === 'loading' && <Loading />}
+      {status === 'notfound' && <NotFound />}
+      {status === 'success' && <Result />}
       
-      <h1>Recommendations for {username}</h1>
-      <ul>
-        {movies.map((m) => (
-          <li key={m.title}>{m.title}</li>
-        ))}
-      </ul>
     </div>
   );
 }
