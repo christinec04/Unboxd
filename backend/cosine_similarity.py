@@ -23,7 +23,8 @@ def find_representative_movie(movies, weights):
     """
     Find the most representative movie from a list of movies based on weighted total cosine similarity.
     Args:
-        movies_features (list): A list of lists, where each inner list contains the feature vectors of a movie.
+        movies (list): A list of lists, where each inner list contains the feature vectors of a movie.
+        weights (list): A list of weights corresponding to the positive sentiment (compound) of each movie.
     Returns:
         int: The index of the most representative movie in the input list.
     """
