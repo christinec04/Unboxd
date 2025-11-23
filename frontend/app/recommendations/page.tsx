@@ -51,7 +51,7 @@ export default function RecommendationsPage() {
 
       {status === 'loading' && <Loading />}
       {status === 'notfound' && <NotFound />}
-      {status === 'success' && <Result />}
+      {status === 'success' && <Result movies={movies} />}
       
     </div>
   );
