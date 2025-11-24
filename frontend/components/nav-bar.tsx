@@ -5,67 +5,47 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { ModeToggle } from "@/components/theme-toggle"
-import api from '../app/api';
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const navItems = [
   { href: "/", label: "Home" },
   { href: "https://github.iu.edu/B365-Fall2025/Project-ez2-ermili-cch8-dvchavan", label: "Docs", isExternal: true },
 ]
 
-export function NavBar(){
-  const [username, setUsername] = useState("");
-
-  // Submit username to backend
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!username) { return;}
-
-    try { 
-      let response = await api.post('/username', { username: username });
-      console.log(response.data.message);
-
-      if (response.data.status === false) {
-        throw new Error(response.data.message);
-      }
-
-      response = await api.get(`/recommendations/${username}`);
-      console.log(response);
-    } 
-    catch (error) {
-      console.error(error);
-      return;
-    }
-  };
-
+export function NavBar({ username, setUsername, handleSubmit }){
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background-55 backdrop-blur-sm">
-      <div className="container mx-auto p-4 sm:px-6 lg:px-8 flex gap-2 justify-between">
-        <div className="flex flex-wrap gap-2">
-          { /* Navigation Items */ }
-          <div>
-            {navItems.map((item) => (
-              <Button key={item.href} variant="link" onClick={() => window.open(item.href, "_self")}>{item.label}</Button>
-            ))}
-          </div>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/55 backdrop-blur-md">
+      <div className="container mx-auto p-4 sm:px-6 lg:px-8 flex justify-between gap-4">
+        {/* Right Side */}
+        <div className="flex flex-wrap gap-y-4">
+          { /* Navigation Links */ }
+          {navItems.map((item) => (
+            <Button key={item.href} variant="link" asChild>
+              <Link href={item.href} target="_self" rel="noopener noreferrer">
+                {item.label}
+              </Link>
+            </Button>
+          ))}
 
           { /* Username Input */ }
-          <form className="sm:w-sm" onSubmit={handleSubmit}>
-            <InputGroup>
-              <InputGroupInput id="username"
-              type="text"
-              placeholder="username"
-              value={username}                
-              onChange={(e) => setUsername(e.target.value)} 
-              autoComplete="off"/>
+          <form onSubmit={handleSubmit} className="pl-4 sm:min-w-sm sm:w-auto w-full">
+            <InputGroup className="bg-accent/55 backdrop-blur-md">
+              <InputGroupInput 
+                className="w-full"
+                id="username"
+                type="text"
+                placeholder="username"
+                value={username}                
+                onChange={(e) => setUsername(e.target.value)} 
+                autoComplete="off"/>
             </InputGroup>
           </form>
           </div>
 
+          {/* Left side */}
           { /* Theme Toggle */ }
           <ModeToggle />
-          
         </div>
     </header>
   )

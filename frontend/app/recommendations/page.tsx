@@ -4,12 +4,19 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import api from "@/app/api/index";
 import { NavBar } from "@/components/nav-bar";
+import { useRouter } from "next/navigation";
+import { Loading } from "@/components/progress";
+import { Result } from "@/components/result";
+import { NotFound } from "@/components/not-found";
 
 export default function RecommendationsPage() {
   const searchParams = useSearchParams();
-  const username = searchParams.get("username");
+  const [username, setUsername] = useState(searchParams.get("username"));
   const [movies, setMovies] = useState([]);
+  const router = useRouter();
+  const [status, setStatus] = useState<'loading' | 'notfound' | 'success'>('success');
 
+  // On page load, fetch recommended movies
   useEffect(() => {
     async function fetchMovies() {
       const res = await api.get(`/movies/?username=${username}`);
@@ -18,16 +25,34 @@ export default function RecommendationsPage() {
     }
     fetchMovies();
   }, [username]);
+  
+  // Submit username to backend
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!username) { return; }
+
+    try {
+      await api.post('/usernames/', { username: username });
+    }
+    catch (error) {
+      console.error(error);
+      return;
+    }
+
+    // Navigate to next page
+    router.push(`/recommendations?username=${username}`);
+  };
+  
 
   return (
-    <div>
-      <NavBar />
-      <h1>Recommendations for {username}</h1>
-      <ul>
-        {movies.map((m) => (
-          <li key={m.title}>{m.title}</li>
-        ))}
-      </ul>
+    <div className="min-h-screen w-full bg-background flex flex-col">
+      <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
+
+      {status === 'loading' && <Loading />}
+      {status === 'notfound' && <NotFound />}
+      {status === 'success' && <Result movies={movies} />}
+      
     </div>
   );
 }

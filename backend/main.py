@@ -1,11 +1,13 @@
+from os import name
 import uvicorn
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
-from models import UsernameRequest, Status, StatusResponse, Movie, MoviesResponse
+from models import UsernameRequest, Status, StatusResponse, Movie
 from scrape_reviews import scrape_reviews 
 from sent import sentiment_analysis
 from scrape_reviews import scrape_reviews
+from dummy_data import dummyData
 
 app = FastAPI()
 
@@ -24,9 +26,6 @@ app.add_middleware(
 
 status: dict[str, Status] = dict()
 recommendations: dict[str, list[Movie]] = dict()
-
-# dummyData = [{"name": "Barbie", "year": "2023", "description": "Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.", "posterURL": "https://a.ltrbxd.com/resized/film-poster/2/7/7/0/6/4/277064-barbie-0-230-0-345-crop.jpg?v=1b83dc7a71"},]
-dummyData = [Movie(name="Barbie", year="2023", description="Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.", posterURL="https://a.ltrbxd.com/resized/film-poster/2/7/7/0/6/4/277064-barbie-0-230-0-345-crop.jpg?v=1b83dc7a71"),]
 
 def system(username): 
     # TODO add more steps
@@ -52,12 +51,15 @@ def check_status(username: str):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
     return StatusResponse(status=status[username])
 
-@app.get("/movies/", response_model=MoviesResponse)
-def recommend_movies(username: str):
-    if username not in recommendations:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
-    return MoviesResponse(movies=recommendations[username])
+@app.get("/movies/", response_model=list[Movie])
+def recommend_movies(username):
+    # if username not in recommendations:
+    #     raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
+    # return MoviesResponse(movies=recommendations[username])
 
+    # testing data returns 
+    return dummyData
+    
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
     # uvicorn.run(app, host="127.0.0.1", port=8000)
