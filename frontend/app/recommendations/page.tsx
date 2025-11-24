@@ -46,7 +46,7 @@ export default function RecommendationsPage() {
   
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen w-full bg-background flex flex-col">
       <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
 
       {status === 'loading' && <Loading />}

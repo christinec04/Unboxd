@@ -17,6 +17,7 @@ export function NavBar({ username, setUsername, handleSubmit }){
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/55 backdrop-blur-md">
       <div className="container mx-auto p-4 sm:px-6 lg:px-8 flex justify-between gap-4">
+        {/* Right Side */}
         <div className="flex flex-wrap gap-y-4">
           { /* Navigation Links */ }
           {navItems.map((item) => (
@@ -28,7 +29,7 @@ export function NavBar({ username, setUsername, handleSubmit }){
           ))}
 
           { /* Username Input */ }
-          <form onSubmit={handleSubmit} className="flex-1 min-w-sm pl-4">
+          <form onSubmit={handleSubmit} className="pl-4 sm:min-w-sm sm:w-auto w-full">
             <InputGroup className="bg-accent/55 backdrop-blur-md">
               <InputGroupInput 
                 className="w-full"
@@ -42,9 +43,9 @@ export function NavBar({ username, setUsername, handleSubmit }){
           </form>
           </div>
 
+          {/* Left side */}
           { /* Theme Toggle */ }
           <ModeToggle />
-          
         </div>
     </header>
   )

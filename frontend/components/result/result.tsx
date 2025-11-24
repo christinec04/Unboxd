@@ -68,7 +68,7 @@ export function Result({ movies }: ResultProps) {
       {/* Trailer */}
       {trailer && 
       (
-        <section className="py-24 relative overflow-hidden">
+        <section className="py-24 relative overflow-hidden border-b-1">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative flex flex-col justify-center items-center gap-8">
              <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-center">
               Now Playing: {trailer.name}
@@ -81,10 +81,9 @@ export function Result({ movies }: ResultProps) {
       {/* Movies */}
       <section className="py-24 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          
-          <ItemGroup className="flex flex-row flex-wrap gap-6 justify-center">
+          <ItemGroup className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
             {movies.map((movie) => (
-              <Item key={movie.name} variant="outline" className="w-50 bg-accent">
+              <Item key={movie.name} variant="outline" className="bg-accent">
                 <ItemHeader className="group aspect-[2/3] rounded-sm overflow-hidden relative">
                     <div className="w-full h-full absolute inset-0 cursor-pointer 
                       z-10 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100"
@@ -94,8 +93,8 @@ export function Result({ movies }: ResultProps) {
                     <Image
                       src={movie.posterURL}
                       alt={movie.name}
-                      width={230}
-                      height={345}
+                      width={1000}
+                      height={1500}
                       className="h-full w-full object-cover rounded-sm"
                     />
                 </ItemHeader>

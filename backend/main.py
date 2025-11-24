@@ -7,6 +7,7 @@ from models import UsernameRequest, Status, StatusResponse, Movie
 from scrape_reviews import scrape_reviews 
 from sent import sentiment_analysis
 from scrape_reviews import scrape_reviews
+from dummy_data import dummyData
 
 app = FastAPI()
 
@@ -25,10 +26,6 @@ app.add_middleware(
 
 status: dict[str, Status] = dict()
 recommendations: dict[str, list[Movie]] = dict()
-
-dummyData = [
-    Movie(name="Barbie", year="2023", genre=["Comedy", "Fantasy"], description="Barbie and Ken are having the time of their lives in the colorful and seemingly perfect world of Barbie Land. However, when they get a chance to go to the real world, they soon discover the joys and perils of living among humans.", posterURL="https://a.ltrbxd.com/resized/film-poster/2/7/7/0/6/4/277064-barbie-0-230-0-345-crop.jpg?v=1b83dc7a71", letterboxdURL="https://letterboxd.com/film/barbie/", trailerID="Ml0bijl4IoA"),
-    Movie(name="Oppenheimer", year="2023", genre=["Drama", "History"], description="The story of J. Robert Oppenheimer's role in the development of the atomic bomb during World War II.", posterURL="https://a.ltrbxd.com/resized/film-poster/7/8/4/3/2/8/784328-oppenheimer-0-230-0-345-crop.jpg?v=e3c6e7a32c", letterboxdURL="https://letterboxd.com/film/oppenheimer-2023/", trailerID="pXTvDfOjbh0"),]
 
 def system(username): 
     # TODO add more steps
