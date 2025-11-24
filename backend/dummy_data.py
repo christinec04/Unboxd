@@ -19,7 +19,7 @@ dummyData = [
     
     Movie(name="Parasite", 
           year="2019", 
-          genre=["Drama", "History"], 
+          genre=["Comedy", "Thriller", "Drama"], 
           description="All unemployed, Ki-taek's family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.", 
           posterURL="https://a.ltrbxd.com/resized/film-poster/4/2/6/4/0/6/426406-parasite-0-230-0-345-crop.jpg?v=8f5653f710", 
           letterboxdURL="https://letterboxd.com/film/parasite-2019/", 
@@ -27,7 +27,7 @@ dummyData = [
     
     Movie(name="Everything Everywhere All at Once", 
           year="2022", 
-          genre=["Drama", "History"], 
+          genre=["Science Fiction", "Adventure", "Comedy", "Action"], 
           description="An aging Chinese immigrant is swept up in an insane adventure, where she alone can save what's important to her by connecting with the lives she could have led in other universes.",
           posterURL="https://a.ltrbxd.com/resized/film-poster/4/7/4/4/7/4/474474-everything-everywhere-all-at-once-0-230-0-345-crop.jpg?v=281f1a041e", 
           letterboxdURL="https://letterboxd.com/film/everything-everywhere-all-at-once", 
@@ -35,7 +35,7 @@ dummyData = [
     
     Movie(name="Fight Club", 
           year="1999", 
-          genre=["Drama", "History"], 
+          genre=["Drama"], 
           description="A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground \"fight clubs\" forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion.", 
           posterURL="https://a.ltrbxd.com/resized/film-poster/5/1/5/6/8/51568-fight-club-0-230-0-345-crop.jpg?v=768b32dfa4", 
           letterboxdURL="https://letterboxd.com/film/fight-club", 
@@ -43,7 +43,7 @@ dummyData = [
     
     Movie(name="La La Land", 
           year="2016", 
-          genre=["Drama", "History"], 
+          genre=["Drama", "Comedy", "Music", "Romance"], 
           description="Mia, an aspiring actress, serves lattes to movie stars in between auditions and Sebastian, a jazz musician, scrapes by playing cocktail party gigs in dingy bars, but as success mounts they are faced with decisions that begin to fray the fragile fabric of their love affair, and the dreams they worked so hard to maintain in each other threaten to rip them apart.", 
           posterURL="https://a.ltrbxd.com/resized/film-poster/2/4/0/3/4/4/240344-la-la-land-0-230-0-345-crop.jpg?v=053670ff84", 
           letterboxdURL="https://letterboxd.com/film/la-la-land/", 
