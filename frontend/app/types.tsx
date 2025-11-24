@@ -5,4 +5,5 @@ export interface Movie {
     posterURL: string;
     letterboxdURL: string;
     description: string;
+    trailerID: string;
 }

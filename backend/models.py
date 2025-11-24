@@ -23,3 +23,4 @@ class Movie(BaseModel):
     description: str
     posterURL: str
     letterboxdURL: str
+    trailerID: str

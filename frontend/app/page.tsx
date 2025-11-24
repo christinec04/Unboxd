@@ -99,8 +99,8 @@ export default function HomePage() {
       >
         <defs>
           <linearGradient id="gradient" gradientTransform="rotate(90)">
-            <stop offset="10%"  stopColor={theme === "light" ? "var(--color-blue-300)" : "var(--color-sky-700"} />
-            <stop offset="90%" stopColor={theme === "light" ? "var(--color-blue-100)" : "var(--color-slate-800"} />
+            <stop offset="10%"  stopColor={theme === "dark" ? "var(--color-sky-700" : "var(--color-blue-300)"} />
+            <stop offset="90%" stopColor={theme === "dark" ? "var(--color-slate-800" : "var(--color-blue-100)"} />
           </linearGradient>
         </defs>
       </Wave>

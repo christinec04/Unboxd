@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/input-group"
 import { ModeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -19,7 +20,11 @@ export function NavBar({ username, setUsername, handleSubmit }){
         <div className="flex flex-wrap gap-y-4">
           { /* Navigation Links */ }
           {navItems.map((item) => (
-            <Button key={item.href} variant="link" onClick={() => window.open(item.href, "_self")}>{item.label}</Button>
+            <Button key={item.href} variant="link" asChild>
+              <Link href={item.href} target="_self" rel="noopener noreferrer">
+                {item.label}
+              </Link>
+            </Button>
           ))}
 
           { /* Username Input */ }
