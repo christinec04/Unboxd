@@ -87,7 +87,8 @@ export function Result({ movies }: ResultProps) {
               <Item key={movie.name} variant="outline" className="w-50 bg-accent">
                 <ItemHeader className="group aspect-[2/3] rounded-sm overflow-hidden relative">
                     <div className="w-full h-full absolute inset-0 cursor-pointer 
-                      z-10 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100">
+                      z-10 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100"
+                      onClick={() => setTrailer(movie)}>
                         <Play className="h-[20px] w-[20px] text-white                      group-hover:translate-y-0 transform translate-y-full transition-all duration-300"/>
                     </div>
                     <Image
