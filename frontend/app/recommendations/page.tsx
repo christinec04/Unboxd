@@ -5,9 +5,9 @@ import { useSearchParams } from "next/navigation";
 import api from "@/app/api/index";
 import { NavBar } from "@/components/nav-bar";
 import { useRouter } from "next/navigation";
-import { Loading } from "@/components/result/progress";
-import { Result } from "@/components/result/result";
-import { NotFound } from "@/components/result/not-found";
+import { Loading } from "@/components/progress";
+import { Result } from "@/components/result";
+import { NotFound } from "@/components/not-found";
 
 export default function RecommendationsPage() {
   const searchParams = useSearchParams();
