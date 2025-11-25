@@ -36,8 +36,8 @@ def is_valid_review(review):
 
     return True
 
-path = r"C:\Users\zhang\School\B365\Project-ez2-ermili-cch8-dvchavan\reviews\schaffrillas.csv"
-output_path = r"C:\Users\zhang\School\B365\Project-ez2-ermili-cch8-dvchavan\processed_reviews\schaffrillas_sentiment.csv"
+path = r"C:\Users\zhang\School\B365\Project-ez2-ermili-cch8-dvchavan\reviews\ericZ.csv"
+output_path = r"C:\Users\zhang\School\B365\Project-ez2-ermili-cch8-dvchavan\processed_reviews\ericZ_sentiment.csv"
 
 df = pd.read_csv(path)
 
