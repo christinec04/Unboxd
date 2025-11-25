@@ -22,3 +22,35 @@
 - `cd frontend`
 - To install all dependencies `npm install`
 - To run the frontend `npm run dev`
+
+## File architecture
+`root`
+- `backend` backend folder
+  - `data` all datasheets
+  - `helpers` helper methods
+    - `models.py` type modelling
+    - `movieswreviews.py` merges movie dataset with reviews
+    - `recommender.py` cosine similarity, knn and recommender methods
+    - `scrape_reviews.py` Letterboxd scraper
+    - `sentiment.py` sentiment analysis on reviews
+    - `utils.py`
+  - `main.py` main backend file to run
+- `frontend` frontend folder
+  - `app`
+    - `api`
+      - `index.ts` backend api setup
+    - `recommendations`
+      - `page.tsx` recommendations page ("/recommendations")
+    - `globals.css` global css file
+    - `layout.tsx` main layout
+    - `page.tsx` main landing page ("/")
+    - `types.tsx` type modelling
+  - `components`
+    - `ui` shadcn ui components
+    - `error.tsx` error component
+    - `movie-card.tsx` movie card component
+    - `nav-bar.tsx` navigation bar component
+    - `progress.tsx` progress bar component
+    - `result.tsx` result component that shows on loaded results page
+    - `theme-provider.tsx` dark/light mode theme provider
+    - `theme-toggle.tsx` dark/light mode toggle component
