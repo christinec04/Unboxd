@@ -14,7 +14,7 @@ export default function RecommendationsPage() {
   const [username, setUsername] = useState(searchParams.get("username"));
   const [movies, setMovies] = useState([]);
   const router = useRouter();
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('success');
 
   // On page load, fetch recommended movies
   useEffect(() => {
@@ -60,9 +60,9 @@ export default function RecommendationsPage() {
     <div className="min-h-screen w-full bg-background flex flex-col">
       <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
 
-      {status === 'loading' && <Loading />}
+      {status === 'loading' && <Loading />} {/* loading doesn't work atm */}
       {status === 'success' && <Result movies={movies} />}
-      <Error message={status}/>
+      {status !== 'loading' && status !== 'success' && <Error message={status}/>}
       
     </div>
   );
