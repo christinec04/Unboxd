@@ -6,7 +6,8 @@ from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
 from models import UsernameRequest, Status, StatusResponse, Movie
 from scrape_reviews import scrape_reviews 
-from sent import sentiment_analysis
+from sentiment import sentiment_analysis
+from scrape_reviews import scrape_reviews
 from dummy_data import dummyData
 from recommender import recommend_movies
 
