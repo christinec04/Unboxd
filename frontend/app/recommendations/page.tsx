@@ -7,14 +7,14 @@ import { NavBar } from "@/components/nav-bar";
 import { useRouter } from "next/navigation";
 import { Loading } from "@/components/progress";
 import { Result } from "@/components/result";
-import { NotFound } from "@/components/not-found";
+import { Error } from "@/components/error";
 
 export default function RecommendationsPage() {
   const searchParams = useSearchParams();
   const [username, setUsername] = useState(searchParams.get("username"));
   const [movies, setMovies] = useState([]);
   const router = useRouter();
-  const [status, setStatus] = useState<'loading' | 'notfound' | 'success'>('success');
+  const [status, setStatus] = useState('success');
 
   // On page load, fetch recommended movies
   useEffect(() => {
@@ -23,7 +23,15 @@ export default function RecommendationsPage() {
       setMovies(res.data);
       console.log(res.data)
     }
-    fetchMovies();
+
+    // Assumes username exists in Letterboxd, and user has review data
+    try {
+      fetchMovies();
+    }
+    catch (e) {
+      console.error(e);
+    }
+  
   }, [username]);
   
   // Submit username to backend
@@ -33,10 +41,13 @@ export default function RecommendationsPage() {
     if (!username) { return; }
 
     try {
+      setStatus('loading');
       await api.post('/usernames/', { username: username });
+      setStatus('success');
     }
-    catch (error) {
-      console.error(error);
+    catch (e) {
+      setStatus(String(e));
+      console.error(e);
       return;
     }
 
@@ -49,9 +60,9 @@ export default function RecommendationsPage() {
     <div className="min-h-screen w-full bg-background flex flex-col">
       <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
 
-      {status === 'loading' && <Loading />}
-      {status === 'notfound' && <NotFound />}
+      {status === 'loading' && <Loading />} {/* loading doesn't work atm */}
       {status === 'success' && <Result movies={movies} />}
+      {status !== 'loading' && status !== 'success' && <Error message={status}/>}
       
     </div>
   );

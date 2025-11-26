@@ -90,6 +90,8 @@ def system(username):
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
+    # should check if username exists in database, throw error if so
+    # should check if scraped data is empty, throw error if so
     status[request.username] = Status.starting
     background_tasks.add_task(system, request.username)
     # uncomment here to test displaying the movies on the frontend
