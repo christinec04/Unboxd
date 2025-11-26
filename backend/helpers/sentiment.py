@@ -43,8 +43,8 @@ def sentiment_analysis(df: pd.DataFrame) -> pd.DataFrame:
 
 if __name__ == '__main__':
     username = sys.argv[1]
-    path = create_path([os.getcwd(), 'data/reviews', f'{username}.csv'])
+    path = create_path([os.getcwd(), '..', 'data', 'reviews', f'{username}.csv'])
     df = sentiment_analysis(pd.read_csv(path))
-    output_path = create_path([os.getcwd(), 'data/processed_reviews', f'{username}.csv'])
+    output_path = create_path([os.getcwd(), '..', 'data', 'processed_reviews', f'{username}.csv'])
     df.to_csv(output_path, index=False)
 
