@@ -13,8 +13,8 @@ def cosine_similarity(movie1, movie2):
         float: The cosine similarity score between the two movies.
     """
     # Concatenate the feature vectors of each movie into a single vector
-    movie1_vector = np.concatenate(movie1)
-    movie2_vector = np.concatenate(movie2)
+    movie1_vector = np.concatenate([np.array(f) for f in movie1])
+    movie2_vector = np.concatenate([np.array(f) for f in movie2])
     
     similarity = sklearn_cosine_similarity(movie1_vector.reshape(1, -1),
                                movie2_vector.reshape(1, -1))
@@ -66,11 +66,14 @@ def recommend_movies(user_movies, weights, watched_ids, all_movies, k=10):
     """
     representative_index = find_representative_movie(user_movies, weights)
     # Retrieve feature vector of the representative movie
-    representative_vector = np.concatenate(user_movies[representative_index])
+    representative_vector = np.concatenate([np.array(f) for f in user_movies[representative_index]])
 
     all_movie_ids = list(all_movies.keys())
     # Retrieve feature vectors of all the movies from the dataset
-    all_movie_vectors = np.array([np.concatenate(v) for v in all_movies.values()])
+    all_movie_vectors = np.array([
+        np.concatenate([np.array(f) for f in v]) 
+        for v in all_movies.values()
+    ])
 
     # Reshape the representative movie's feature vector for sklearn's euclidian_distances function
     representative_vector_reshaped = representative_vector.reshape(1, -1)
@@ -82,6 +85,8 @@ def recommend_movies(user_movies, weights, watched_ids, all_movies, k=10):
 
     # Sort by distance (ascending)
     movie_distances.sort(key=itemgetter(1))
+
+    print(f"DEBUG: Top 5 closest movies (ID, Distance): {movie_distances[:5]}")
 
     recommendations = []
 
