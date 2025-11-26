@@ -60,4 +60,4 @@ def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
 if __name__ == "__main__":
     username = sys.argv[1]
     data = scrape_reviews(username, print_status=True)
-    data.to_csv(create_path([os.getcwd(), 'reviews', f'{username}.csv']), index=False)
+    data.to_csv(create_path([os.getcwd(), '..', 'data', 'reviews', f'{username}.csv']), index=False)
