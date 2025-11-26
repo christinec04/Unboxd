@@ -68,12 +68,12 @@ def recommend_movies(user_movies, weights, watched_ids, all_movies, k=10):
     # Retrieve feature vector of the representative movie
     representative_vector = np.concatenate(user_movies[representative_index])
 
-    all_movie_ids = list(all_movies.key())
+    all_movie_ids = list(all_movies.keys())
     # Retrieve feature vectors of all the movies from the dataset
     all_movie_vectors = np.array([np.concatenate(v) for v in all_movies.values()])
 
     # Reshape the representative movie's feature vector for sklearn's euclidian_distances function
-    representative_vector_reshaped = representative_vector(1, -1)
+    representative_vector_reshaped = representative_vector.reshape(1, -1)
     # Calculate Euclidian distance between the representative movie and all movie feature vectors
     distances = euclidean_distances(representative_vector_reshaped, all_movie_vectors)[0]
 
