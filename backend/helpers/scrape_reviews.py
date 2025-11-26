@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 import sys
 import pandas as pd
 import os
-from utils import create_path
+from backend.helpers.utils import create_path
 
 def click_element(driver, element):
     driver.execute_script('arguments[0].click();', element)
