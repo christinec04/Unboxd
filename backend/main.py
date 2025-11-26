@@ -6,7 +6,8 @@ from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
 from models import UsernameRequest, Status, StatusResponse, Movie
 from scrape_reviews import scrape_reviews 
-from sent import sentiment_analysis
+from sentiment import sentiment_analysis
+from scrape_reviews import scrape_reviews
 from dummy_data import dummyData
 from recommender import recommend_movies
 
@@ -90,6 +91,8 @@ def system(username):
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
+    # should check if username exists in database, throw error if so
+    # should check if scraped data is empty, throw error if so
     status[request.username] = Status.starting
     background_tasks.add_task(system, request.username)
     # uncomment here to test displaying the movies on the frontend

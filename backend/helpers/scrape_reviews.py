@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 import sys
 import pandas as pd
 import os
-from utils import create_path
+from backend.helpers.utils import create_path
 
 def click_element(driver, element):
     driver.execute_script('arguments[0].click();', element)
@@ -60,4 +60,4 @@ def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
 if __name__ == "__main__":
     username = sys.argv[1]
     data = scrape_reviews(username, print_status=True)
-    data.to_csv(create_path([os.getcwd(), 'reviews', f'{username}.csv']), index=False)
+    data.to_csv(create_path([os.getcwd(), '..', 'data', 'reviews', f'{username}.csv']), index=False)
