@@ -17,6 +17,7 @@ class StatusResponse(BaseModel):
     status: Status
     
 class Movie(BaseModel):
+    movieId: str
     name: str
     year: str
     genre: List[str]
@@ -24,3 +25,4 @@ class Movie(BaseModel):
     posterURL: str
     letterboxdURL: str
     trailerID: str
+    similarityScore: float
