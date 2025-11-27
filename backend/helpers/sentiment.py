@@ -2,7 +2,6 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
 import os
 import sys
-from .utils import create_path
 
 # sentence = """Okay this will be fun - imagine if an illegal alien was a real human being!?! Right? We should make that 🤗
 # It’s a decent premise but needed to make the point a lot stronger. And the Mexican kid running away from the cartel to America is a little…
@@ -42,9 +41,12 @@ def sentiment_analysis(df: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == '__main__':
+    from utils import create_path
     username = sys.argv[1]
     path = create_path([os.getcwd(), '..', 'data', 'reviews', f'{username}.csv'])
     df = sentiment_analysis(pd.read_csv(path))
     output_path = create_path([os.getcwd(), '..', 'data', 'processed_reviews', f'{username}.csv'])
     df.to_csv(output_path, index=False)
+else:
+    from .utils import create_path
 
