@@ -2,7 +2,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
 import os
 import sys
-from backend.helpers.utils import create_path
+from .utils import create_path
 
 # sentence = """Okay this will be fun - imagine if an illegal alien was a real human being!?! Right? We should make that 🤗
 # It’s a decent premise but needed to make the point a lot stronger. And the Mexican kid running away from the cartel to America is a little…

@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 import sys
 import pandas as pd
 import os
-from utils import create_path
+from .utils import create_path
 import requests
 from bs4 import BeautifulSoup
 

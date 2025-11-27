@@ -1,6 +1,5 @@
 from enum import Enum
 from pydantic import BaseModel
-from typing import List
 
 class UsernameRequest(BaseModel):
     username: str
@@ -20,7 +19,7 @@ class Movie(BaseModel):
     movieId: str
     name: str
     year: str
-    genre: List[str]
+    genre: list[str]
     description: str
     posterURL: str
     letterboxdURL: str

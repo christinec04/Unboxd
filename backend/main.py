@@ -69,7 +69,6 @@ def create_mock_data():
     return user_movies, weights, watched_ids, all_movies
 
 def system(username): 
-    # TODO add more steps
     status[username] = Status.scraping_reviews
     df = scrape_reviews(username)
     status[username] = Status.preprocessing_data
@@ -95,8 +94,6 @@ def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
     # should check if scraped data is empty, throw error if so
     status[request.username] = Status.starting
     background_tasks.add_task(system, request.username)
-    # uncomment here to test displaying the movies on the frontend
-    # recommendations[request.username] = dummyData
     return
 
 @app.get("/status/", response_model=StatusResponse)
@@ -107,6 +104,7 @@ def check_status(username: str):
 
 @app.get("/movies/", response_model=list[Movie])
 def get_recommend_movies(username):
+    # return dummyData
     if username not in recommendations:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
     return recommendations[username]

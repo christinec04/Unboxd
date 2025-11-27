@@ -1,4 +1,4 @@
-from models import Movie
+from .models import Movie
 
 dummyData = [
     Movie(movieId="1000001",
