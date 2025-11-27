@@ -3,7 +3,9 @@ from selenium.webdriver.common.by import By
 import sys
 import pandas as pd
 import os
-from backend.helpers.utils import create_path
+from utils import create_path
+import requests
+from bs4 import BeautifulSoup
 
 def click_element(driver, element):
     driver.execute_script('arguments[0].click();', element)
@@ -17,7 +19,10 @@ def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     driver = webdriver.Chrome(options)
-    data = { 'name': [], 'user rating': [], 'user review': [] }
+    columns = ['name', 'user rating', 'user review', 'date', 'description']
+    data = {}
+    for column in columns:
+        data[column] = []
     page_number = 1
     while True:
         if print_status:
@@ -45,12 +50,24 @@ def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
                 # default to 0 which cannot be used as a rating in letterboxd
                 user_rating = 0
             data['user rating'].append(user_rating)
+            poster = review.find_element(By.CLASS_NAME, 'film-poster')
+            movie_link = poster.find_element(By.TAG_NAME, 'a').get_attribute('href')
+            description = None
+            if movie_link:
+                response = requests.get(movie_link)
+                soup = BeautifulSoup(response.text, 'html.parser')
+                description_element = soup.find(attrs={'class':'truncate'})
+                if description_element:
+                    description = description_element.text.strip()
+            data['description'].append(description)
             name_parent_element = review.find_element(By.CLASS_NAME, 'name')
             name = name_parent_element.find_element(By.TAG_NAME, 'a').text
             data['name'].append(name)
             user_review_element = review.find_element(By.CLASS_NAME, 'js-review-body')
             user_review = user_review_element.text
             data['user review'].append(user_review)
+            release_date = review.find_element(By.CLASS_NAME, 'releasedate').text
+            data['date'].append(release_date)
         page_number += 1
     if print_status:
         print('finished scraping')

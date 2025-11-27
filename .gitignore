@@ -4,3 +4,4 @@ env/
 ENV/
 .vscode/
 __pycache__/
+backend/__pycache__/
