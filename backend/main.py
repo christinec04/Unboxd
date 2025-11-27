@@ -4,12 +4,12 @@ import numpy as np
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
-from models import UsernameRequest, Status, StatusResponse, Movie
-from scrape_reviews import scrape_reviews 
+from helpers.models import UsernameRequest, Status, StatusResponse, Movie
+from helpers.scrape_reviews import scrape_reviews 
 from sentiment import sentiment_analysis
-from scrape_reviews import scrape_reviews
-from dummy_data import dummyData
-from recommender import recommend_movies
+from helpers.scrape_reviews import scrape_reviews
+from helpers.dummy_data import dummyData
+from helpers.recommender import recommend_movies
 
 app = FastAPI()
 
