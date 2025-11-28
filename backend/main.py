@@ -1,5 +1,6 @@
-from os import name
+import os
 import uvicorn
+import pandas as pd
 import numpy as np
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
@@ -10,6 +11,7 @@ from helpers.sentiment import sentiment_analysis
 from helpers.scrape_reviews import scrape_reviews
 from helpers.dummy_data import dummyData
 from helpers.recommender import recommend_movies
+from helpers.movieswreviews import merge_sentiment_reviews_dataset
 
 app = FastAPI()
 
@@ -28,6 +30,7 @@ app.add_middleware(
 
 status: dict[str, Status] = dict()
 recommendations: dict[str, list[Movie]] = dict()
+movies = pd.read_csv(os.path.join(os.getcwd(), "data", "movies.csv"))
 
 def get_movie_metadata(recs):
     """
@@ -41,7 +44,7 @@ def get_movie_metadata(recs):
     for movie_id, score in recs:
         if movie_id in id_to_movie:
             # Create a copy and update the similarity score field
-            movie = id_to_movie[movie_id].model_copy(update={'similarity_score': score})
+            movie = id_to_movie[movie_id].model_copy(update={"similarity_score": score})
             final_recs.append(movie)
     return final_recs
 
@@ -70,13 +73,14 @@ def create_mock_data():
 
 def system(username): 
     status[username] = Status.scraping_reviews
-    df = scrape_reviews(username)
+    reviews = scrape_reviews(username)
     status[username] = Status.preprocessing_data
-    new_df = sentiment_analysis(df)
+    sentiment_reviews = sentiment_analysis(reviews)
+    merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
+    # TODO need to preprocess and then 
 
-    status[username] = Status.finding_representative
-    user_movies_mock, weights_mock, watched_ids_mock, all_movies_mock = create_mock_data()
     status[username] = Status.finding_recommendation
+    user_movies_mock, weights_mock, watched_ids_mock, all_movies_mock = create_mock_data()
     recs = recommend_movies(
         user_movies=user_movies_mock,
         weights=weights_mock,
