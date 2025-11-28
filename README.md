@@ -28,7 +28,7 @@
 ### Merging Analyzed Reviews with the International Movies Dataset
 
 - `cd helpers`
-- Ensure the analyzed reviews are at `./data/processed_reviews/username.csv` 
+- Ensure the analyzed reviews are at `./data/sentiment_reviews/username.csv` 
 - Run the merger: `uv run movieswreviews.py username`, where `username` is the same one from above
 - After the program terminates, find the merged, analyzed reviews `../data/merged_reviews/username.csv`, where `username` is the same one from above
 
