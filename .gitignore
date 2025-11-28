@@ -7,5 +7,5 @@ ENV/
 **/.DS_Store
 backend/data/merged_trending_movies.csv
 backend/data/movies.csv
-backend/data/Trending_Movies.csv
+backend/data/trending_movies.csv
 backend/data/movie_dataset
