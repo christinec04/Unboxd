@@ -1,5 +1,5 @@
-name,year,user_rating,user_review
-Nope,2022,3.0,"Don't look him in the eyes.
+,name,year,user_rating,user_review,is_valid,compound
+0,Nope,2022,3.0,"Don't look him in the eyes.
 Spectacle
 Heading into AMC, my friends and I were fresh off of Get Out's bone-chilling social commentary. We had big expectations for Nope since it seemed to share the same sci-fi and horror elements. The thrill met my excitement, such as Gordy's blood-splatter and Jean Jacket's digestion, but I felt as if Nope lacked a clear social critique. Keke Palmer stated that ""Nope is not really a movie you can explain"", which sums up the disappointment that my friends and I felt leaving the theater. Palmer goes on to suggest that ""the true horror is our desire to be a part of a spectacle... and the things we're willing to do."" In the film, really only the TMZ biker and the crowd that gathers to watch Jean Jacket come to mind, and they are quickly ridiculed by the audience. The key difference lies in intent: the TMZ biker knew exactly the consequences of chasing after Jean Jacket, risking his life for fame. But the tourists who gathered to watch Jean Jacket believed that it was tamed, not there for some spectacle of extremity/suffering. If they went there to suffer, then that would be a much different scenario, making them extreme and not the average human tendency. Like the TMZ biker, outrageous efforts to gain popularity are also ridiculed in modern life, making it not all that appealing to take extreme actions in exchange for fame. It is hard to label human tendency as a whole when the desire for spectacle boils down to extreme people enjoying suffering and extremity—a much narrower critique than the film implies.
 Screenwriting
@@ -7,41 +7,41 @@ Daniel Kaluuya's role in Nope is definitely a step-down from his performance in 
 Animals
 The chilling chimpanzee scene was easily the most terrifying sequence. Visually, Jean Jacket's design is pretty; however, after reading other reviews its unclear whether it is a biblical reference of an angel or the design of a cuttlefish. This ambiguity in design mirrors the film's overall thematic confusion. Looking back, there are a lot of easter eggs, but my favorite is definitely Keke Palmer's 'Akira slide'.
 Other
-I watched Nope close to its release date and during a time where I was much less interested in films. I can also see some holes in my counter-argument for the film's commentary on spectacle. Since it's Jordan Peele, a rewatch wouldn't hurt."
-Longlegs,2024,3.5,"Crimson or clover.
+I watched Nope close to its release date and during a time where I was much less interested in films. I can also see some holes in my counter-argument for the film's commentary on spectacle. Since it's Jordan Peele, a rewatch wouldn't hurt.",True,0.842
+1,Longlegs,2024,3.5,"Crimson or clover.
 Intensity
 In the scene where Maika Monroe sees Nicolas Cage as Longlegs for the first time, her resting heart rate of 76 BPM reached 170. Monroe’s heartbeat plays over the interaction, underlining the intensity. Not just Monroe’s heartbeat, but also mine while viewing the film, signifies the intensity of Longlegs. The camera work, specifically the dolly zooms elevated the uncertainty of what was going to unfold.
 90’s Nostalgia
 From the start, director Oz Perkins immerses the viewer in a specific, time and place: the mid-1990s. The opening scene, in particular, leverages a desaturated nostalgia similar to classic serial killer thrillers. The plot is faithful to the accuracy of how things worked during that time, especially within the context of the mystery genre. While this gave the story an authentic feel, the ending felt a little underwhelming.
 Other
-If you are new to horror films, I would definitely not recommend watching Longlegs on your birthday. I didn’t think I would be able to take Nicholas Cage seriously, but he definitely fit his role."
-Mad Max: Fury Road,2015,4.0,"I live. I die. I LIVE AGAIN.
+If you are new to horror films, I would definitely not recommend watching Longlegs on your birthday. I didn’t think I would be able to take Nicholas Cage seriously, but he definitely fit his role.",True,-0.2881
+2,Mad Max: Fury Road,2015,4.0,"I live. I die. I LIVE AGAIN.
 Cool Vs. Warm
 The contrasting orange hue during the daytime versus blue at night defines Mad Max: Fury Road's visual style. The viewing experience features roughly an hour and a half of unfiltered action with explosions from vehicle warfare in the desert. Together, the film combines the warm and cool sides of the desert world-building with the bold reds of the War Boys' attire and grey metallic sheen of the vehicles, creating a vibrant aesthetic. With that being said, it is almost impossible to watch without 4k or 1080p.
 Other
-I thought the plot grazed through the crow-like characters in The Green Place too quickly. The toxic swamp seemed interesting and some lore would've been cool. I enjoyed the randomness of each character's design, specifically the War Boys and flame throwing guitarist."
-Monster,2023,4.0,"Happiness is something anyone can have.
+I thought the plot grazed through the crow-like characters in The Green Place too quickly. The toxic swamp seemed interesting and some lore would've been cool. I enjoyed the randomness of each character's design, specifically the War Boys and flame throwing guitarist.",True,0.0772
+3,Monster,2023,4.0,"Happiness is something anyone can have.
 Perspective
 Kore-eda Hirokazu's Monster is an examination of how limited/self-serving perception fuels dehumanization. Through a rigorous game of narratives, a single crisis is dismantled to answer: ""Who is the monster?"" The compelling drama of the people involved in a fifth grader's life elevates philosophical profoundness, challenging the audience's understanding of each character.
 Emotion Weight
 The impact of the young leads in Monster is undeniable and essential. Soya Kurokawa, in particular, delivers a layered performance that carries the film's intense emotional weight and grounds its entire narrative puzzle. I wish there was a little more backstory to each character, but maybe that is Hirokazu's intention to leave us in the dark with the characters.
 Other
-At first I was unaware of the significance of the music, but I appreciated a couple of scenes that highlight a change of pace by using brass instruments instead of the usual piano-driven pieces."
-Midsommar,2019,2.5,"It’s fine. It’s Sweden.
+At first I was unaware of the significance of the music, but I appreciated a couple of scenes that highlight a change of pace by using brass instruments instead of the usual piano-driven pieces.",True,0.8735
+4,Midsommar,2019,2.5,"It’s fine. It’s Sweden.
 Ambience
 The prolonged static shots and disorienting hazy visuals create the unsettling, dream-like aesthetic and convey the characters' drug-induced states. The vibrant flowers/background pop against the characters' white outfits. At one point, my sister was practicing Chopin’s Valse to Madame the Countess Delphine Potocka downstairs, adding an unexpected ambiance and tricked my friends and me into thinking it was part of the soundtrack.
 Ari Aster
 If Ari Aster did not direct Midsommar, I’m not sure its reputation would hold the same status. Similar in Hereditary, Aster likes to involve family tragedy, which he does much better in Hereditary. There are notable easter eggs that display trauma, but those are really the only moments it’s shown. The connection between the friend group that goes to Sweden together is lackluster-ed too. The unsettling scenes, specifically one at the climax, are more so “bruh moments” in the sense of turning to your friends and commenting on the ridiculousness. I will give credit where it’s due to some lore-specific horror sequences.
 Other
-It should really be “It’s not fine. It’s Sweden.”Midsommar did convince me to not go to Sweden anymore or drink suspicious mushroom tea. It’s weird how this viewing is treated as entertainment, almost normalized in a sense. If the cult was not Swedish, perceptions of a particular ethnicity, as a whole, may be affected."
-Tokyo Godfathers,2003,4.5,"God must be busy at this time of year.
+It should really be “It’s not fine. It’s Sweden.”Midsommar did convince me to not go to Sweden anymore or drink suspicious mushroom tea. It’s weird how this viewing is treated as entertainment, almost normalized in a sense. If the cult was not Swedish, perceptions of a particular ethnicity, as a whole, may be affected.",True,0.7123
+5,Tokyo Godfathers,2003,4.5,"God must be busy at this time of year.
 Pilgrimage
 Tokyo Godfathers offers an original composition of principal characters: a middle-aged alcoholic, runaway teen, former drag queen, and abandoned newborn. All compelled by the helpless life of a baby, the three homeless strangers set on a pilgrimage toward their own redemption. Can things that are broken still be fixed? What follows is an endless string of seemingly impossible coincidences that can only be labeled as divine intervention.
 Tradition
 The profound contradictions of the setting—a decorated, idealized Christmas against the backdrop of desperate poverty—amplify the trios' isolation and deep regret, creating a non-traditional, deeply emotional, and redemptive holiday tale. While life itself may be ephemeral, Director Satoshi Kon compels us to focus on the enduring beauty of found family, a connection that is often marked by circumstance.
 Other
-Satoshi Kon really pulled Tokyo Godfathers deep from his bag. There was definitely a stylistic deviation from his usual portfolio of signature psycho-thrillers."
-Magnolia,1999,2.5,"This cannot be one of those things.
+Satoshi Kon really pulled Tokyo Godfathers deep from his bag. There was definitely a stylistic deviation from his usual portfolio of signature psycho-thrillers.",True,0.4927
+6,Magnolia,1999,2.5,"This cannot be one of those things.
 Duration
 The opening, with its philosophical setup on fate and chance, set a pretty high bar that the film's narrative couldn't clear in the end. The promise of profound coincidences in Magnolia evaporated over its runtime; my friends and I want our 3 hours back.
 Dialogue
@@ -49,30 +49,30 @@ The individual character arcs were sometimes amusing, specifically the relations
 Alienation
 When the six of us had to deliberately watch YouTube videos to understand the 'deeper meaning,' our sentiment shifted from puzzled curiosity to shared frustration. Magnolia's narrow focus on the anxieties of the predominantly white, suburban experience in the late 90s and early 2000s alienated us. None of us were white or conscious during that time period.
 Other
-Do I really want to do a rewatch and try to understand dialogue and the interconnectedness better?"
-American Psycho,2000,2.5,"Eggshell with Romalian type.
+Do I really want to do a rewatch and try to understand dialogue and the interconnectedness better?",True,0.5715
+7,American Psycho,2000,2.5,"Eggshell with Romalian type.
 Satirical Humor
 Christian Bale describes American Psycho as ""brilliant, but farcical on many levels"" in an interview. While the satirical humor was enjoyable in select scenes, such as the business card exchange, I didn't find the brilliance that accompanied the dark humor of sex and murder all that appealing. As a director, Mary Harron's goal to ridicule the average Wall Street businessman and social system of 1980s New York City was successful; however, I didn't have as much fun as I thought I would have watching it. Hate-watching just isn't my forte. The disturbing lack of diversity in the West at that time is a realistic touch that can be appreciated.
 Other
-Christian Bale's American accent was surprisingly soothing. American Psycho's reputation would be saved if some enjoyers stopped idolizing the main character."
-Birdman or (The Unexpected Virtue of Ignorance),2014,3.0,"You never know the particulars.
+Christian Bale's American accent was surprisingly soothing. American Psycho's reputation would be saved if some enjoyers stopped idolizing the main character.",True,0.9375
+8,Birdman or (The Unexpected Virtue of Ignorance),2014,3.0,"You never know the particulars.
 Continuity
 Birdman feels as if it was filmed all in one continuous shot. The jazz drums scores, camera pans, and one-on-one dialogue transition well from scene to scene, but the heavy use of this formula isn't necessarily engaging for having friends over, especially when one of them falls asleep.
 Ambiguity
 Birdman's pursuit of past glory deepens his conflicting self-perception, setting up a final sequence that is hard to label. This narrative choice is the opposite of lazy, emphasizing the summation of existential themes and effort placed into the filming process.
 Other
-There are one too many scenes with Michael Keaton and Edward Norton in underwear."
-The Fifth Element,1997,3.5,"Follies, lollies, and lick-them-lollies.
+There are one too many scenes with Michael Keaton and Edward Norton in underwear.",True,0.127
+9,The Fifth Element,1997,3.5,"Follies, lollies, and lick-them-lollies.
 Flamboyancy
 Chris Tucker's role as a flamboyant radio host is the sole reason why he should be the sixth element. The slower pacing in the first-half of The Fifth Element is made up for by the fashion icon in a leopard print suit with a cannon design for his hair.
 Character Design
 The science fantasy tone is well-complemented by its villain designs, such as one antagonist's asymmetrical plastic headpiece and slicked-back hair. An opera scene accompanied by an action sequence was definitely random, but also cohesive. Apparently, that opera song is one of the most difficult in the world to sing.
 Other
-Throughout The Fifth Element, I kept thinking to myself that Millie Jovovich's character looked like a live-action Nami from One Piece."
-Kill Bill: Vol. 1,2003,5.0,"It's a forest, and it's easy to lose your way.
+Throughout The Fifth Element, I kept thinking to myself that Millie Jovovich's character looked like a live-action Nami from One Piece.",True,-0.2238
+10,Kill Bill: Vol. 1,2003,5.0,"It's a forest, and it's easy to lose your way.
 Visual Identity
 The contrasting blend of monochrome, anime, and vibrant color grading define Kill Bill's visual identity. The 8 minute anime sequence reminded me of Samurai Champloo. The similarity in sharp and rough animation is not just a coincidence; Kazuto Nakazawa, the director of the animation segment, also served as the character designer and chief animation director for Samurai Champloo. Since Samurai Champloo is my favorite anime, I can't help but be biased.
 Heterogeneity
 Kill Bill's ensemble of diverse female characters distinguishes itself. Lucy Liu's performance as a Japanese-Chinese-American pretty much sums up the diversity. Chiaki Kuriyama's performance as a psychotic schoolgirl-bodyguard stood out the most, elevating the adrenaline of all the blood spill. While the composition of the cast offered dynamic relationships, there was a lack of backstory, with the exception of an antagonist.
 Other
-The rizz sound effect is from Kill Bill? This was my first time watching a Quentin Tarantino film, so I had no clue about the running gag between Tarantino and feet. While that caught me off-guard, I was a fan of the back-of-the-heel shots (with shoes on) scattered throughout Kill Bill."
+The rizz sound effect is from Kill Bill? This was my first time watching a Quentin Tarantino film, so I had no clue about the running gag between Tarantino and feet. While that caught me off-guard, I was a fan of the back-of-the-heel shots (with shoes on) scattered throughout Kill Bill.",True,-0.9816
