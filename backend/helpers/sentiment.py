@@ -9,14 +9,21 @@ def is_valid_review(review) -> bool:
         return False
 
     text = review.strip()
-    if len(text) < 3:
+    MIN_CHAR_LENGTH = 3
+    if len(text) < MIN_CHAR_LENGTH:
         return False
 
-    stopwords = {"and", "the", "this", "that", "is", "a", "i"} 
-    words = [w for w in text.lower().split() if w not in stopwords]
-    if len(words) < 3:
-        return False
-    return True
+    # If the review has words or numbers, it is valid
+    alphanum_count = sum(c.isalnum() for c in text)
+    if alphanum_count > 0:
+        return True
+    
+    # If the review has no alphanumeric content (ex. "!!!" or "..."),
+    # we allow it only if it's short to prevent symbol-spamming
+    MAX_SYMBOL_LENGTH = 15
+    if len(text) <= MAX_SYMBOL_LENGTH:
+        return True
+    return False
 
 
 def sentiment_analysis(df: pd.DataFrame) -> pd.DataFrame:
