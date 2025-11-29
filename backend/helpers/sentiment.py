@@ -9,7 +9,7 @@ def is_valid_review(review) -> bool:
         return False
 
     text = review.strip()
-    if len(text) < 20:
+    if len(text) < 3:
         return False
 
     stopwords = {"and", "the", "this", "that", "is", "a", "i"} 
