@@ -4,11 +4,14 @@ import pandas as pd
 import re
 from pandas.core.internals.managers import create_block_manager_from_column_arrays
 from tqdm import tqdm
+import ast
+from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-trending_movies_path = os.path.join(os.getcwd(), "..", "data", "trending_movies.csv")
-movies_folder_path = os.path.join(os.getcwd(), "..", "data", "movie_dataset")
-movies_path = os.path.join(os.getcwd(), "..", "data", "movies.csv")
-merged_trending_movies_path = os.path.join(os.getcwd(), "..", "data", "merged_trending_movies.csv")
+trending_movies_path = os.path.join(os.getcwd(), "data", "trending_movies.csv")
+movies_folder_path = os.path.join(os.getcwd(), "data", "movie_dataset")
+movies_path = os.path.join(os.getcwd(), "data", "movies.csv")
+merged_trending_movies_path = os.path.join(os.getcwd(), "data", "merged_trending_movies.csv")
 
 def safe_get(d, keys, default=None):
     """Safely navigate nested dictionaries/lists."""
