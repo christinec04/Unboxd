@@ -5,7 +5,7 @@ movies_path = os.path.join(script_dir, "..", "data", "movies.csv")
 preprocessed_movies_path = os.path.join(script_dir, "..", "data", "preprocessed_movies.csv")
 
 INPUT_FILE = preprocessed_movies_path
-OUTPUT_PREFIX = 'split_part_'
+OUTPUT_PREFIX = 'split_'
 MAX_LINES = 3250
 
 def split_csv_by_lines(input_file, output_prefix, max_lines):
