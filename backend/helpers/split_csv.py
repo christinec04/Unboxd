@@ -6,7 +6,7 @@ preprocessed_movies_path = os.path.join(script_dir, "..", "data", "preprocessed_
 
 INPUT_FILE = preprocessed_movies_path
 OUTPUT_PREFIX = 'split_part_'
-MAX_LINES = 6500
+MAX_LINES = 3250
 
 def split_csv_by_lines(input_file, output_prefix, max_lines):
     """Splits a CSV file into smaller parts based on a maximum number of lines."""
