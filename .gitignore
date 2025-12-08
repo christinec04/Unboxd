@@ -1,13 +1,13 @@
 venv/
-.venv/
+**/.venv/
 env/
 ENV/
 .vscode/
 **/__pycache__/
 **/.DS_Store
-backend/data/merged_trending_movies.csv
 backend/data/movies.csv
 backend/data/trending_movies.csv
 backend/data/movie_dataset
 backend/data/preprocessed_movies.csv
-backend/data/preprocessed_movies.csv.zip
+backend/data/sentiment_reviews/*
+backend/data/merged_reviews/*
