@@ -7,7 +7,7 @@
 - Download the [International Movies Dataset](https://www.kaggle.com/datasets/pavan4kalyan/imdb-dataset-of-600k-international-movies) and move its inner `movie_datset` folder to `backend/data/movie_dataset`
 - `cd backend`
 - Create virtual environment (one time only): `uv venv`
-- Activate the venv: `source .venv/bin/activate`
+- Activate the venv: `source .venv/bin/activate` (Mac) `.venv\Scripts\activate` (Windows)
 - Initialize the datasets (one time only): `uv run helpers/initialize_datasets.py`
 - Run the backend: `uv run main.py`
 - Deactivate the venv: `deactivate`
