@@ -17,7 +17,7 @@ class StatusResponse(BaseModel):
 class Movie(BaseModel):
     movieId: str
     name: str
-    year: str
+    year: int
     genre: list[str]
     description: str
     posterURL: str
