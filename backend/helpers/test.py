@@ -1,6 +1,12 @@
-from .models import Movie
+import numpy as np
+if __name__ == "__main__":
+    from models import Movie
+    from recommender import recommend_movies
+else:
+    from .models import Movie
+    from .recommender import recommend_movies
 
-dummyData = [
+dummy_data = [
     Movie(movieId="1000001",
           name="Barbie", 
           year="2023",
@@ -61,3 +67,82 @@ dummyData = [
           trailerID="0pdqf4P9MB8",
           similarityScore=0.0),
     ]
+
+def create_mock_data() -> tuple[np.ndarray, list[float], set[str], np.ndarray, list[str]]:
+    """
+    Creates sample data structures needed by `recommender.py` for testing
+    """
+    # Ensure all feature vectors are NumPy arrays for compatibility with recommender.py
+    user_movies = np.array([
+        [0.9, 0.1, 0.7],  # Movie A
+        [0.1, 0.9, 0.2],  # Movie B
+    ])
+    weights = [0.8, 0.4]
+    user_movie_ids = set(["1000001", "1000002"]) # Mock watched movies (IDs must match dummy_data)
+    all_movies = np.array([
+        [0.9, 0.1, 0.7],
+        [0.1, 0.9, 0.2],
+        [0.85, 0.15, 0.8], 
+        [0.2, 0.8, 0.3],   
+        [0.5, 0.5, 0.5],   
+        [0.9, 0.1, 0.9],  
+    ])
+    all_movie_ids = [
+        "1000001",
+        "1000002",
+        "1000003",
+        "1000004",
+        "1000005",
+        "1000006",
+    ]
+    return user_movies, weights, user_movie_ids, all_movies, all_movie_ids
+
+
+def get_mock_movie_metadata(recs: dict[str, float]) -> list[Movie]:
+    """
+    Converts (movie id, score) tuples from the recommender 
+    into full `Movie` objects using dummy data for metadata lookup
+    """
+    # Create a mapping of movie_id to the full Movie object from your dummy data
+    id_to_movie = {m.movieId: m for m in dummy_data}
+
+    final_recs = []
+    for movie_id, score in recs.items():
+        if movie_id in id_to_movie:
+            # Create a copy and update the similarity score field
+            movie = id_to_movie[movie_id].model_copy(update={"similarityScore": score})
+            final_recs.append(movie)
+    return final_recs
+
+
+def test_recommender_module():
+    """
+    Runs a test of the recommender logic before server startup
+    """
+    print("--- Starting Recommender Test ---")
+
+    user_movies, weights, user_movie_ids, all_movies, all_movie_ids = create_mock_data()
+    k = 3
+    
+    try:
+        recs = recommend_movies(
+            user_movies=user_movies, 
+            weights=weights, 
+            user_movie_ids=user_movie_ids, 
+            all_movies=all_movies, 
+            all_movie_ids=all_movie_ids, 
+            k=k
+        )
+        final_recs = get_mock_movie_metadata(recs)
+
+        print(f"Successfully generated {len(final_recs)} recommendations:")
+        for movie in final_recs:
+            print(f"- {movie.name} ({movie.movieId}), Score: {movie.similarityScore:.4f}")
+
+    except Exception as e:
+        print(f"Recommender Test Failed with an error: {e}")
+    
+    print("--- Recommender Test Finished ---")
+
+if __name__ == "__main__":
+    test_recommender_module()
