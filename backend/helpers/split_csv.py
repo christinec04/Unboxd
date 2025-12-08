@@ -1,12 +1,5 @@
 import os
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-movies_path = os.path.join(script_dir, "..", "data", "movies.csv")
-preprocessed_movies_path = os.path.join(script_dir, "..", "data", "preprocessed_movies.csv")
-
-INPUT_FILE = preprocessed_movies_path
-OUTPUT_PREFIX = 'split_'
-MAX_LINES = 3250
+from paths import Path
 
 def split_csv_by_lines(input_file, output_prefix, max_lines):
     """Splits a CSV file into smaller parts based on a maximum number of lines."""
@@ -29,8 +22,8 @@ def split_csv_by_lines(input_file, output_prefix, max_lines):
                         outfile.close()
                     
                     # Define the new output file name
-                    output_file_name = f'{output_prefix}{file_count}.csv'
-                    outfile = open(output_file_name, 'w')
+                    output_file_path = os.path.join(Path.preprocessed_movies_folder, f'{output_prefix}{file_count}.csv')
+                    outfile = open(output_file_path, 'w')
                     
                     # Write the header to the new file
                     outfile.write(header)
@@ -54,5 +47,8 @@ def split_csv_by_lines(input_file, output_prefix, max_lines):
         print(f"An unexpected error occurred: {e}")
 
 
-if __name__ == "__main__":
-    split_csv_by_lines(INPUT_FILE, OUTPUT_PREFIX, MAX_LINES)
+split_csv_by_lines(
+        input_file=Path.preprocessed_movies, 
+        output_prefix='split_', 
+        max_lines=12500,
+)
