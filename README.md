@@ -5,11 +5,13 @@
 - Install [uv](https://docs.astral.sh/uv/getting-started/installation/) for handling python versions, packages, and virtual environments
 - `cd backend`
 - Create virtual environment (one time only): `uv venv`
-- Prior to running scripts, activate the venv: `source .venv/bin/activate`
+- Prior to running scripts, activate the venv
+    - MacOS/Linux: `source .venv/bin/activate`
+    - Windows: `source .venv\Scripts\activate`
 - Run the server: `uv run main.py`
 - Deactivate the venv when done: `deactivate`
 
-## Backend Setup for Development (Optional)
+## MacOS/Linux Backend Setup for Development (Optional)
 
 ### Creating Datasets
 
@@ -39,6 +41,37 @@
 
 - `uv run helpers/movieswreviews.py username`
 - Find the reviews and their sentiment analysis at `data/merged_reviews/username.csv` 
+
+## Windows Backend Setup for Development (Optional)
+
+### Creating Datasets
+
+- Download the [(international) movies dataset](https://www.kaggle.com/datasets/pavan4kalyan/imdb-dataset-of-600k-international-movies) and move inner the `movie_dataset` to `data\movie_dataset`
+- Download the [trending movies dataset](https://www.kaggle.com/datasets/amitksingh2103/trending-movies-over-the-years) and move it to `data\trending_movies.csv`
+- Initialize the movies dataset and merged trending movies dataset: `uv run helpers\initialize_datasets.py`
+- Preprocess the movies dataset: `uv run helpers\preprocess_features.py`
+- Split the preprocessed movies dataset: `uv run helpers\split_csv.py`
+- Retrieve the preprocessed features of the trending movies dataset: `uv run helpers\retrieve_preprocessed.py`
+- **(Very slow ~ 6 hrs)** Scrape movie trailer YouTube video ids for the merged trending movies dataset: `uv run helpers\scrape_trailer_ids.py`
+
+### Scraping, Sentiment Analysis, and Merging of Letterboxd Data
+
+- Select a Letterboxd user's `username` to use 
+
+#### Scraping 
+
+- `uv run helpers\scrape_reviews.py username`
+- Find the scraped reviews at `data\reviews\username.csv`
+
+#### Sentiment Analysis
+
+- `uv run helpers\sentiment.py username`
+- Find the scraped reviews and their sentiment analysis at `data\sentiment_reviews\username.csv`
+
+#### Merging
+
+- `uv run helpers\movieswreviews.py username`
+- Find the reviews and their sentiment analysis at `data\merged_reviews\username.csv` 
 
 ## Frontend Setup
 - Install [Node.js](https://nodejs.org/en/download) to get npm
