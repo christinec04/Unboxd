@@ -3,6 +3,7 @@
 ## Backend Setup
 - Install [Google Chrome](https://www.google.com/chrome/) to use for scraping
 - Install [uv](https://docs.astral.sh/uv/getting-started/installation/) for handling python versions, packages, and virtual environments
+- Download the [(international) movies dataset](https://drive.google.com/file/d/1dwHwCoIjesnRsvrOr_MbSBNcz6vOvaCU/view?usp=sharing) and move it to `data/movies.csv` or `data\movies.csv`
 - `cd backend`
 - Create virtual environment (one time only): `uv venv`
 - Prior to running scripts, activate the venv
