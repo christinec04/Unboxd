@@ -39,7 +39,7 @@ def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
     if print_status: print("starting scraping")
     driver = init_headless_chrome_webdriver()
     columns = ["name", "year", "user_rating", "user_review"]
-    data = { col:[] for col in columns }
+    data = {col:[] for col in columns}
     for page_number in count(start=1, step=1):
         if print_status: print(f"scraping page {page_number}...")
         driver.get(get_reviews_url(username, page_number))
@@ -47,20 +47,20 @@ def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
         if len(reviews) == 0:
             break
         for review in reviews:
+            try:
+                user_rating_symbols = review.find_element(By.CLASS_NAME, "rating").text.strip()
+                user_rating = user_rating_symbols.count("★") + \
+                        0.5 * user_rating_symbols.count("½")
+            except:
+                # skip reviews without ratings
+                continue
+            data["user_rating"].append(user_rating)
             reveal_hidden_reviews_content(driver, review)
             name_parent_element = review.find_element(By.CLASS_NAME, "name")
             name = name_parent_element.find_element(By.TAG_NAME, "a").text
             data["name"].append(name)
             release_year = review.find_element(By.CLASS_NAME, "releasedate").text
             data["year"].append(release_year)
-            try:
-                user_rating_symbols = review.find_element(By.CLASS_NAME, "rating").text.strip()
-                user_rating = user_rating_symbols.count("★") + \
-                        0.5 * user_rating_symbols.count("½")
-            except:
-                # default to 0 which cannot be used as a rating in letterboxd
-                user_rating = 0
-            data["user_rating"].append(user_rating)
             user_review_element = review.find_element(By.CLASS_NAME, "js-review-body")
             user_review = user_review_element.text
             data["user_review"].append(user_review)
@@ -69,7 +69,8 @@ def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:
     return pd.DataFrame.from_dict(data)
 
 if __name__ == "__main__":
+    from paths import Path
     username = sys.argv[1]
     data = scrape_reviews(username, print_status=True)
-    data.to_csv(os.path.join(os.getcwd(), "..", "data", "reviews", f"{username}.csv"), index=False)
+    data.to_csv(os.path.join(Path.reviews_folder, f"{username}.csv"))
 

@@ -1,15 +1,10 @@
-import os
 import ast
 import gc
 import pandas as pd
 import numpy as np
-
+from paths import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-movies_path = os.path.join(script_dir, "..", "data", "movies.csv")
-preprocessed_movies_path = os.path.join(script_dir, "..", "data", "preprocessed_movies.csv")
 
 def efficient_multi_hot_encode(df: pd.DataFrame, col: str, k: int) -> pd.DataFrame:
     """
@@ -54,7 +49,7 @@ def preprocess_movie_dataset(input_path: str, output_path: str) -> None:
     df = pd.read_csv(input_path)
     
     # Drop irrelevant columns and reset index
-    df.drop(columns=["original_title", "poster_url", "Unnamed: 0"], inplace=True, errors='ignore')
+    df.drop(columns=["original_title", "clean_title", "poster_url", "Unnamed: 0"], inplace=True, errors='ignore')
     df.reset_index(drop=True, inplace=True)
 
     # This reduces the base memory footprint of the main DataFrame
@@ -64,11 +59,11 @@ def preprocess_movie_dataset(input_path: str, output_path: str) -> None:
 
     # --- A. Multi-Hot Encoding for List Features (MODIFIED FOR EFFICIENCY) ---
     list_cols_k = {
-        "genres": 50,      # Typically low cardinality, but cap it just in case
-        "directors": 500,  # Focus on most influential/frequent directors
-        "writers": 500,    # Focus on most frequent writers
-        "actors": 1000,    # Large potential size, cap at 1,000 top actors
-        "companies": 500   # Focus on major production companies
+        "genres": 50,    #   50 # Typically low cardinality, but cap it just in case
+        "directors": 100,#  500 # Focus on most influential/frequent directors
+        "writers": 100,  #  500 # Focus on most frequent writers
+        "actors": 100,   # 1000 # Large potential size, cap at 1,000 top actors
+        "companies": 50 #  500 # Focus on major production companies
     }
     
     # Prepare list columns outside the loop
@@ -92,7 +87,7 @@ def preprocess_movie_dataset(input_path: str, output_path: str) -> None:
     # Use direct assignment to avoid FutureWarning/chained assignment
     df['plot'] = df['plot'].fillna('')
     
-    tfidf = TfidfVectorizer(stop_words='english', min_df=50, max_features=2000)
+    tfidf = TfidfVectorizer(stop_words='english', min_df=50, max_features=75)
     tfidf_matrix = tfidf.fit_transform(df['plot'])
 
     # This keeps the resulting DataFrame columns sparse and memory-efficient.
@@ -123,5 +118,4 @@ def preprocess_movie_dataset(input_path: str, output_path: str) -> None:
     df.to_csv(output_path, index=False)
     print(f"Numerized and processed dataset saved to: {output_path}")
 
-if __name__ == "__main__":
-    preprocess_movie_dataset(input_path=movies_path, output_path=preprocessed_movies_path)
+preprocess_movie_dataset(input_path=Path.movies, output_path=Path.preprocessed_movies)

@@ -1,14 +1,11 @@
 from selenium.webdriver.common.by import By
 import pandas as pd
-from initialize_datasets import merged_trending_movies_path
-from scrape_reviews import init_headless_chrome_webdriver
-import os
 import time
 import requests
 import json
 from tqdm import tqdm
-
-trailer_ids_path = os.path.join(os.getcwd(), "..", "data", "trending_movie_trailer_ids.csv")
+from scrape_reviews import init_headless_chrome_webdriver
+from paths import Path
 
 def get_trailer_search_url(movie_name: str, release_year: str):
     """Returns the url for searching for `movie_name`'s trailer on YouTube"""
@@ -71,16 +68,15 @@ def scrape_trailer_ids(movie_names: list[str], release_years: list[str]) -> list
         trailer_ids.append(video_id)
     return trailer_ids
 
-if __name__ == "__main__":
-    merged_trending_movies = pd.read_csv(merged_trending_movies_path)
-    strings = lambda xs: [str(x) if x else "" for x in xs]
-    release_years = strings(merged_trending_movies["release_year"].values)
-    movie_names = strings(merged_trending_movies["original_title"].values)
-    # slower but less error prone than the other scraping method
-    trailer_ids = scrape_trailer_ids_with_driver(movie_names, release_years) 
-    # trailer_ids = scrape_trailer_ids(movie_names, release_years) 
-    result = pd.DataFrame()
-    result["imdb_id"] = merged_trending_movies["imdb_id"]
-    result["trailer id"] = trailer_ids
-    result.to_csv(trailer_ids_path)
+merged_trending_movies = pd.read_csv(Path.merged_trending_movies)
+strings = lambda xs: [str(x) if x else "" for x in xs]
+release_years = strings(merged_trending_movies["release_year"].values)
+movie_names = strings(merged_trending_movies["original_title"].values)
+# slower but less error prone than the other scraping method
+trailer_ids = scrape_trailer_ids_with_driver(movie_names, release_years) 
+# trailer_ids = scrape_trailer_ids(movie_names, release_years) 
+result = pd.DataFrame()
+result["imdb_id"] = merged_trending_movies["imdb_id"]
+result["trailer_id"] = trailer_ids
+result.to_csv(Path.trending_movie_trailers)
 

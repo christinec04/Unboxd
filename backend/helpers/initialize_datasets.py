@@ -1,17 +1,9 @@
 import os
 import json
-import pandas as pd
 import re
-from pandas.core.internals.managers import create_block_manager_from_column_arrays
+import pandas as pd
 from tqdm import tqdm
-import ast
-from sklearn.preprocessing import MultiLabelBinarizer, StandardScaler
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-trending_movies_path = os.path.join(os.getcwd(), "data", "trending_movies.csv")
-movies_folder_path = os.path.join(os.getcwd(), "data", "movie_dataset")
-movies_path = os.path.join(os.getcwd(), "data", "movies.csv")
-merged_trending_movies_path = os.path.join(os.getcwd(), "data", "merged_trending_movies.csv")
+from paths import Path
 
 def safe_get(d, keys, default=None):
     """Safely navigate nested dictionaries/lists."""
@@ -23,14 +15,17 @@ def safe_get(d, keys, default=None):
     return d
 
 def initialize_movies_dataset() -> None: 
-    """Extracts the data from all the json files of the movies dataset into a single csv"""
+    """
+    Extracts the data from all the json files of the movies dataset into a single csv
+    https://www.kaggle.com/datasets/pavan4kalyan/imdb-dataset-of-600k-international-movies
+    """
+    clean_title = lambda s: "" if pd.isna(s) else " ".join(re.sub(r"[^a-z0-9 ]", " ", s.lower()).split())
     print("preparing dataset...")
-    clean_title = lambda s: "" if pd.isna(s) else re.sub(r"\s+[^a-z0-9]", " ", s.lower()).strip()
     movie_rows = []
-    for file in tqdm(os.listdir(movies_folder_path)):
+    for file in tqdm(os.listdir(Path.movie_dataset_folder)):
         if not (file.startswith("movies_batch_") and file.endswith(".json")):
             continue
-        path = os.path.join(movies_folder_path, file)
+        path = os.path.join(Path.movie_dataset_folder, file)
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         for movie in data:
@@ -71,48 +66,42 @@ def initialize_movies_dataset() -> None:
             })
     print("saving dataset...")
     movies = pd.DataFrame(movie_rows)
-    movies.to_csv(movies_path)
+    movies.to_csv(Path.movies)
     print("done!")
+
 
 def merge_trending_movies_dataset() -> None:
-    """Merges the trending movies dataset with the features of the movies dataset"""
+    """
+    Merges the trending movies dataset with the features of the movies dataset
+    https://www.kaggle.com/datasets/amitksingh2103/trending-movies-over-the-years
+    """
     print("merging trending movies dataset...")
-    movies = pd.read_csv(movies_path)
-    movie_choices = set(movies["clean_title"].tolist())
-    trending_movies = pd.read_csv(trending_movies_path)
-    clean_title = lambda s: "" if pd.isna(s) else re.sub(r"\s+[^a-z0-9]", " ", s.lower()).strip()
+    movies = pd.read_csv(Path.movies)
+    trending_movies = pd.read_csv(Path.trending_movies)
+    clean_title = lambda s: "" if pd.isna(s) else " ".join(re.sub(r"[^a-z0-9 ]", " ", s.lower()).split())
     date_year = lambda date: float(str(date)[:4]) if date else None
-    best_match = lambda x: x if x in movie_choices else None
-    trending_movies["year"] = trending_movies["release_date"].apply(date_year)
-    trending_movies["other_clean_title"] = trending_movies["original_title"].apply(clean_title)
-    # to avoid conflicting column names when merging datasets
-    trending_movies = trending_movies.rename(columns={ "original_title": "og_title" })
-    trending_movies["matched_title"] = trending_movies["other_clean_title"].apply(best_match)
-    merged = trending_movies.merge(
-        movies,
-        left_on="matched_title",
-        right_on="clean_title",
-        how="left"
-    )
-    merged = merged.query("release_year == year")
-    result = merged[[
-        "original_title",
-        "clean_title",
-        "release_year",
-        "imdb_id",
-        "runtime_seconds",
-        "certificate_rating",
-        "genres",
-        "directors",
-        "writers",
-        "actors",
-        "companies",
-        "poster_url",
-        "plot",
-        ]].reset_index(drop=True)
-    result.to_csv(merged_trending_movies_path)
+    release_years = trending_movies["release_date"].apply(date_year).to_list()
+    clean_titles = trending_movies["original_title"].apply(clean_title).to_list()
+    title2year = {title:year for title, year in zip(clean_titles, release_years)}
+    rows = []
+    for movie in movies.itertuples():
+        if len(title2year) == 0: 
+            break
+        clean_title = movie.clean_title
+        release_year = movie.release_year
+        if clean_title in title2year and title2year[clean_title] == release_year:
+            rows.append([
+                    movie.original_title, movie.release_year, movie.imdb_id,
+                    movie.genres, movie.plot, movie.poster_url
+            ])
+            title2year.pop(clean_title)
+    result = pd.DataFrame(rows, columns=[
+        "original_title", "release_year", "imdb_id",
+        "genres", "plot", "poster_url"
+        ])
+    print("saving result...")
+    result.to_csv(Path.merged_trending_movies)
     print("done!")
 
-if __name__ == "__main__":
-    initialize_movies_dataset()
-    merge_trending_movies_dataset()
+initialize_movies_dataset()
+merge_trending_movies_dataset()

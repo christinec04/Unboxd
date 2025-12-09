@@ -1,103 +1,102 @@
-import os
 import uvicorn
 import pandas as pd
 import numpy as np
+from ast import literal_eval
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
+from helpers.paths import Path
 from helpers.models import UsernameRequest, Status, StatusResponse, Movie
 from helpers.scrape_reviews import scrape_reviews 
 from helpers.sentiment import sentiment_analysis
 from helpers.scrape_reviews import scrape_reviews
-from helpers.dummy_data import dummyData
 from helpers.recommender import recommend_movies
 from helpers.movieswreviews import merge_sentiment_reviews_dataset
-
-app = FastAPI()
-
-origins = [
-    "http://localhost:3000",
-    "http://192.168.11.1:3000"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
 
 status: dict[str, Status] = dict()
 recommendations: dict[str, list[Movie]] = dict()
-movies = pd.read_csv(os.path.join(os.getcwd(), "data", "movies.csv"))
 
-def get_movie_metadata(recs):
+movies = pd.read_csv(Path.movies)
+trending_movies = pd.read_csv(Path.merged_trending_movies)
+
+complete_preprocessed_trending_movies = pd.read_csv(Path.preprocessed_trending_movies)
+indexed_preprocessed_trending_movies = complete_preprocessed_trending_movies.drop(columns=["imdb_id"]).to_numpy()
+preprocessed_trending_movies = np.delete(arr=indexed_preprocessed_trending_movies, obj=0, axis=1)
+preprocessed_trending_movies_ids = complete_preprocessed_trending_movies["imdb_id"].to_list()
+
+trailers = pd.read_csv(Path.trending_movie_trailers)
+trailer_ids = {trailer.imdb_id:trailer.trailer_id for trailer in trailers.itertuples()}
+
+app = FastAPI()
+origins = [
+        "http://localhost:3000",
+        "http://192.168.11.1:3000"
+]
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+)
+uvicorn.run(app, host="0.0.0.0", port=8000)
+
+def get_movies(recs: dict[str, float]) -> list[Movie]:
     """
-    Converts (movie_id, score) tuples from the recommender 
+    Converts the (movie id: score) tuples from the recommender 
     into full Movie objects using dummy data for metadata lookup
     """
-    # Create a mapping of movie_id to the full Movie object from your dummy data
-    id_to_movie = {m.movieId: m for m in dummyData}
-    
-    final_recs = []
-    for movie_id, score in recs:
-        if movie_id in id_to_movie:
-            # Create a copy and update the similarity score field
-            movie = id_to_movie[movie_id].model_copy(update={"similarity_score": score})
-            final_recs.append(movie)
-    return final_recs
+    result = []
+    imdb_ids = set(recs.keys())
+    for movie in retrieve_data(imdb_ids, trending_movies).itertuples():
+        result.append(Movie(
+            movieId=movie.imdb_id,
+            name=movie.original_title,
+            year=int(movie.release_year),
+            genre=literal_eval(movie.genres),
+            description=movie.plot,
+            posterURL=movie.poster_url,
+            letterboxdURL=f'https://www.letterboxd.com/imdb/{movie.imdb_id}',
+            trailerID=trailer_ids[movie.imdb_id] if movie.imdb_id in trailer_ids else "",
+            similarityScore=recs[movie.imdb_id]
+        ))
+    return result 
 
-def create_mock_data():
+def recommendation_system(username: str): 
     """
-    Creates sample data structures needed by recommender.py for testing
+    Completes the trending movie recommendation system for the Letterboxd user `username`, 
+    updating the `status` of the system for `username` along the way, and storing the
+    the result in `recommendations` for `username`
     """
-    # Ensure all feature vectors are NumPy arrays for compatibility with recommender.py
-    user_movies = [
-        [np.array([0.9, 0.1]), np.array([0.7])],  # Movie A
-        [np.array([0.1, 0.9]), np.array([0.2])],  # Movie B
-    ]
-    weights = [0.8, 0.4]
-    watched_ids = {"1000001", "1000002"} # Mock watched movies (IDs must match dummyData)
-
-    # All Movies map (ID -> Feature Vector)
-    all_movies = {
-        "1000001": [np.array([0.9, 0.1]), np.array([0.7])],
-        "1000002": [np.array([0.1, 0.9]), np.array([0.2])],
-        "1000003": [np.array([0.85, 0.15]), np.array([0.8])], 
-        "1000004": [np.array([0.2, 0.8]), np.array([0.3])],   
-        "1000005": [np.array([0.5, 0.5]), np.array([0.5])],   
-        "1000006": [np.array([0.9, 0.1]), np.array([0.9])],  
-    }
-    return user_movies, weights, watched_ids, all_movies
-
-def system(username): 
     status[username] = Status.scraping_reviews
     reviews = scrape_reviews(username)
+  
     status[username] = Status.preprocessing_data
     sentiment_reviews = sentiment_analysis(reviews)
     merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
-    # TODO need to preprocess and then 
+    weights = [a + b for a, b in merged_reviews[["user_rating", "compound"]].values]
+    user_movie_ids = set(merged_reviews["imdb_id"].to_list())
+    complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
+    preprocessed_user_movies = complete_preprocessed_user_movies.drop(columns=["imdb_id"]).to_numpy()
 
     status[username] = Status.finding_recommendation
-    user_movies_mock, weights_mock, watched_ids_mock, all_movies_mock = create_mock_data()
     recs = recommend_movies(
-        user_movies=user_movies_mock,
-        weights=weights_mock,
-        watched_ids=watched_ids_mock,
-        all_movies=all_movies_mock,
-        k=5
+        user_movies=preprocessed_user_movies,
+        weights=weights,
+        user_movie_ids=user_movie_ids,
+        all_movies=preprocessed_trending_movies,
+        all_movie_ids=preprocessed_trending_movies_ids,
+        k=10
     )
-    recommendations[username] = get_movie_metadata(recs)
+    recommendations[username] = get_movies(recs)
 
     status[username] = Status.finished
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
-    # should check if username exists in database, throw error if so
-    # should check if scraped data is empty, throw error if so
     status[request.username] = Status.starting
-    background_tasks.add_task(system, request.username)
+    background_tasks.add_task(recommendation_system, request.username)
     return
 
 @app.get("/status/", response_model=StatusResponse)
@@ -108,41 +107,7 @@ def check_status(username: str):
 
 @app.get("/movies/", response_model=list[Movie])
 def get_recommend_movies(username):
-    # return dummyData
     if username not in recommendations:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
     return recommendations[username]
 
-def test_recommender_module():
-    """
-    Runs a test of the recommender logic before server startup
-    """
-    print("--- Starting Recommender Test ---")
-    
-    user_movies, weights, watched_ids, all_movies = create_mock_data()
-    k = 3
-    
-    try:
-        recs = recommend_movies(
-            user_movies=user_movies, 
-            weights=weights, 
-            watched_ids=watched_ids, 
-            all_movies=all_movies, 
-            k=k
-        )
-        final_recs = get_movie_metadata(recs)
-
-        print(f"Successfully generated {len(final_recs)} recommendations:")
-        for movie in final_recs:
-            print(f"- {movie.name} ({movie.movieId}), Score: {movie.similarity_score:.4f}")
-
-    except Exception as e:
-        print(f"Recommender Test Failed with an error: {e}")
-    
-    print("--- Recommender Test Finished ---")
-    
-if __name__ == "__main__":
-    test_recommender_module()
-
-    uvicorn.run(app, host="0.0.0.0", port=8000)
-    # uvicorn.run(app, host="127.0.0.1", port=8000)
