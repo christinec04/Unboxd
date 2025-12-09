@@ -3,8 +3,8 @@
 ## Backend Setup
 - Install [Google Chrome](https://www.google.com/chrome/) to use for scraping
 - Install [uv](https://docs.astral.sh/uv/getting-started/installation/) for handling python versions, packages, and virtual environments
-- Download the [(international) movies dataset](https://drive.google.com/file/d/1dwHwCoIjesnRsvrOr_MbSBNcz6vOvaCU/view?usp=sharing) and move it to `data/movies.csv` or `data\movies.csv`
 - `cd backend`
+- Download the [(international) movies dataset](https://drive.google.com/file/d/1dwHwCoIjesnRsvrOr_MbSBNcz6vOvaCU/view?usp=sharing) and move it to `data` as `movies.csv`
 - Create virtual environment (one time only): `uv venv`
 - Prior to running scripts, activate the venv
     - MacOS/Linux: `source .venv/bin/activate`
@@ -85,6 +85,12 @@
 - `backend` backend folder
   - `main.py` fastapi server 
   - `data` all datasheets
+    - `movies.csv` (international) movies dataset
+    - `preprocessed_movies` preprocessed splits of the movies dataset
+    - `merged_trending_movies.csv` trending movies with features from the movies dataset
+    - `preprocessed_trending_movies.csv` trending movies with features from the preprocessed movies dataset
+    - `trending_movie_trailers.csv` movie trailer YouTube video ids of the merged trending movies dataset
+    - `reviews` scraped Letterboxd data 
   - `helpers` helper methods
     - `models.py` type modelling
     - `paths.py` enumerates the paths of the contents of `data`
