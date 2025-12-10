@@ -5,11 +5,11 @@ class UsernameRequest(BaseModel):
     username: str
 
 class Status(str, Enum):
-    starting = "starting"
-    scraping_reviews = "scraping reviews"
-    preprocessing_data = "preprocessing data"
-    finding_recommendation = "finding recommendations"
-    finished = "finished"
+    STARTING = "starting"
+    SCRAPING_REVIEWS = "scraping reviews"
+    PREPROCESSING_DATA = "preprocessing data"
+    FINDING_RECOMMENDATION = "finding recommendations"
+    FINISHED = "finished"
 
 class StatusResponse(BaseModel):
     status: Status

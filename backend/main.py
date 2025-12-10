@@ -9,7 +9,6 @@ from helpers.paths import Path
 from helpers.models import UsernameRequest, Status, StatusResponse, Movie
 from helpers.scrape_reviews import scrape_reviews 
 from helpers.sentiment import sentiment_analysis
-from helpers.scrape_reviews import scrape_reviews
 from helpers.recommender import recommend_movies
 from helpers.movieswreviews import merge_sentiment_reviews_dataset
 from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
@@ -45,7 +44,7 @@ uvicorn.run(app, host="0.0.0.0", port=8000)
 def get_movies(recs: dict[str, float]) -> list[Movie]:
     """
     Converts the (movie id: score) tuples from the recommender 
-    into full Movie objects using dummy data for metadata lookup
+    into full Movie objects 
     """
     result = []
     imdb_ids = set(recs.keys())
@@ -69,10 +68,10 @@ def recommendation_system(username: str):
     updating the `status` of the system for `username` along the way, and storing the
     the result in `recommendations` for `username`
     """
-    status[username] = Status.scraping_reviews
+    status[username] = Status.SCRAPING_REVIEWS
     reviews = scrape_reviews(username)
   
-    status[username] = Status.preprocessing_data
+    status[username] = Status.PREPROCESSING_DATA
     sentiment_reviews = sentiment_analysis(reviews)
     merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
     weights = [a + b for a, b in merged_reviews[["user_rating", "compound"]].values]
@@ -80,7 +79,7 @@ def recommendation_system(username: str):
     complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
     preprocessed_user_movies = complete_preprocessed_user_movies.drop(columns=["imdb_id"]).to_numpy()
 
-    status[username] = Status.finding_recommendation
+    status[username] = Status.FINDING_RECOMMENDATION
     recs = recommend_movies(
         user_movies=preprocessed_user_movies,
         weights=weights,
@@ -91,11 +90,11 @@ def recommendation_system(username: str):
     )
     recommendations[username] = get_movies(recs)
 
-    status[username] = Status.finished
+    status[username] = Status.FINISHED
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
-    status[request.username] = Status.starting
+    status[request.username] = Status.STARTING
     background_tasks.add_task(recommendation_system, request.username)
     return
 
@@ -106,8 +105,7 @@ def check_status(username: str):
     return StatusResponse(status=status[username])
 
 @app.get("/movies/", response_model=list[Movie])
-def get_recommend_movies(username):
+def get_recommend_movies(username: str):
     if username not in recommendations:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
     return recommendations[username]
-

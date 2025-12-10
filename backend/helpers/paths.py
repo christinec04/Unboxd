@@ -2,7 +2,7 @@ import os
 from enum import Enum
 
 class Path(str, Enum):
-    data_folder = os.path.join(os.path.abspath(os.path.dirname(os.path.abspath(__file__))), "..", "data")
+    data_folder = os.path.join(os.path.abspath("."), "data")
     movie_dataset_folder = os.path.join(data_folder, "movie_dataset")
     movies = os.path.join(data_folder, "movies.csv")
     preprocessed_movies_folder = os.path.join(data_folder, "preprocessed_movies")

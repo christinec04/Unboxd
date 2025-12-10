@@ -8,31 +8,47 @@ import { FieldDescription } from "@/components/ui/field"
 import { TypeAnimation } from 'react-type-animation';
 import { ModeToggle } from '@/components/theme-toggle';
 import { useTheme } from "next-themes";
-import Wave from 'react-wavify'
+import { Status } from "@/app/types";
+import Wave from 'react-wavify';
 import api from "@/app/api/index";
 
 export default function HomePage() {
   const description = "Please enter your Letterboxd username, not your display name.";
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<Status>(Status.FINISHED);
   const router = useRouter();
   const { theme } = useTheme();
   const [errorMessage, setErrorMessage] = useState(description);
+
+  const getStatus = async () => {
+    try {
+      const response = await api.get('/status/', { params: { username } });
+      setStatus(response.data.status);
+    }
+    catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!username) { return; }
 
-    setLoading(true);
     setErrorMessage(description);
 
     try {
       await api.post('/usernames/', { username: username });
+      const interval = setInterval(getStatus, 2000);
+
+      if (status === Status.FINISHED) {
+        clearInterval(interval);
+      }
     }
     catch (error) {
       console.error(error);
-      setLoading(false);
+      setStatus(Status.FAILED);
       setErrorMessage("Error: " + (error instanceof Error ? error.message : "Unknown error"));
       return;
     }
@@ -69,7 +85,7 @@ export default function HomePage() {
                   autoComplete="off" />
 
                 <InputGroupAddon align="inline-end">
-                  {loading && <Spinner />}
+                  {(status !== Status.FINISHED && status !== Status.FAILED) && <Spinner />}
                 </InputGroupAddon>
               </InputGroup>
             </form>
@@ -99,8 +115,8 @@ export default function HomePage() {
       >
         <defs>
           <linearGradient id="gradient" gradientTransform="rotate(90)">
-            <stop offset="10%"  stopColor={theme === "dark" ? "var(--color-sky-700" : "var(--color-blue-300)"} />
-            <stop offset="90%" stopColor={theme === "dark" ? "var(--color-slate-800" : "var(--color-blue-100)"} />
+            <stop offset="10%"  stopColor={theme === "dark" ? "var(--color-sky-700)" : "var(--color-blue-300)"} />
+            <stop offset="90%" stopColor={theme === "dark" ? "var(--color-slate-800)" : "var(--color-blue-100)"} />
           </linearGradient>
         </defs>
       </Wave>
