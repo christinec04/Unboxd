@@ -40,7 +40,6 @@ app.add_middleware(
         allow_methods=["*"],
         allow_headers=["*"],
 )
-uvicorn.run(app, host="0.0.0.0", port=8000)
 
 def get_movies(recs: dict[str, float]) -> list[Movie]:
     """
@@ -95,6 +94,8 @@ def recommendation_system(username: str):
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
+    print(request.username)
+    return 
     status[request.username] = Status.starting
     background_tasks.add_task(recommendation_system, request.username)
     return
@@ -111,3 +112,5 @@ def get_recommend_movies(username):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
     return recommendations[username]
 
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
