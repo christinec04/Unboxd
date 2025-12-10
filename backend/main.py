@@ -94,8 +94,6 @@ def recommendation_system(username: str):
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
-    print(request.username)
-    return 
     status[request.username] = Status.starting
     background_tasks.add_task(recommendation_system, request.username)
     return
