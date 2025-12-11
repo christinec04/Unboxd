@@ -1,12 +1,14 @@
 import uvicorn
 import pandas as pd
 import numpy as np
+import requests
 from ast import literal_eval
 from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
+from threading import Lock
 from helpers.paths import Path
-from helpers.models import UsernameRequest, Status, StatusResponse, Movie
+from helpers.models import UsernameRequest, Status, Movie
 from helpers.scrape_reviews import scrape_reviews 
 from helpers.sentiment import sentiment_analysis
 from helpers.scrape_reviews import scrape_reviews
@@ -14,6 +16,7 @@ from helpers.recommender import recommend_movies
 from helpers.movieswreviews import merge_sentiment_reviews_dataset
 from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
 
+scraper_lock = Lock()
 status: dict[str, Status] = dict()
 recommendations: dict[str, list[Movie]] = dict()
 
@@ -40,12 +43,11 @@ app.add_middleware(
         allow_methods=["*"],
         allow_headers=["*"],
 )
-uvicorn.run(app, host="0.0.0.0", port=8000)
 
 def get_movies(recs: dict[str, float]) -> list[Movie]:
     """
-    Converts the (movie id: score) tuples from the recommender 
-    into full Movie objects using dummy data for metadata lookup
+    Converts the (movie id : similarity score) mappings from the recommender 
+    into full Movie objects using the trending movies dataset
     """
     result = []
     imdb_ids = set(recs.keys())
@@ -69,9 +71,25 @@ def recommendation_system(username: str):
     updating the `status` of the system for `username` along the way, and storing the
     the result in `recommendations` for `username`
     """
-    status[username] = Status.scraping_reviews
-    reviews = scrape_reviews(username)
-  
+    status[username] = Status.validating_username
+    profile_response = requests.get(f"https://www.letterboxd.com/{username}/")
+    if profile_response.status_code != 200:
+        status[username] = Status.failed_invalid_username
+        return
+
+    status[username] = Status.waiting_for_scraper
+    with scraper_lock:
+        status[username] = Status.scraping_reviews
+        try:
+            reviews = scrape_reviews(username)
+        except:
+            status[username] = Status.failed_scraping
+            return
+
+    if len(reviews) == 0:
+        status[username] = Status.failed_no_reviews
+        return
+
     status[username] = Status.preprocessing_data
     sentiment_reviews = sentiment_analysis(reviews)
     merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
@@ -99,15 +117,46 @@ def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
     background_tasks.add_task(recommendation_system, request.username)
     return
 
-@app.get("/status/", response_model=StatusResponse)
+@app.get("/status/", response_model=Status)
 def check_status(username: str):
     if username not in status:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
-    return StatusResponse(status=status[username])
+        raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail=f"The recommendation system has not run for {username}, \
+                        post /usernames/ to start it."
+        )
+    match status[username]:
+        case Status.failed_invalid_username:
+            raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND, 
+                    detail=f"Invalid Letterboxd username: {username}. \
+                            retry if this is not the case"
+            )
+        case Status.failed_no_reviews:
+            raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail=f"No rated and reviewed movies found for {username}, \
+                            retry if this is not the case."
+            )
+        case Status.failed_scraping:
+            raise HTTPException(
+                    status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+                    detail=f"Failed while scraping Letterboxd data for {username}."
+            )
+        case ok_status:
+            return ok_status
 
 @app.get("/movies/", response_model=list[Movie])
 def get_recommend_movies(username):
     if username not in recommendations:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND)
-    return recommendations[username]
+        raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail=f"The recommendation system is incomplete for {username}, \
+                        get /status/ for more info."
+        )
+    else:
+        return recommendations[username]
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
