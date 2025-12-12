@@ -85,7 +85,6 @@ def recommendation_system(username: str):
         except:
             status[username] = Status.failed_scraping
             return
-
     if len(reviews) == 0:
         status[username] = Status.failed_no_reviews
         return
@@ -93,6 +92,9 @@ def recommendation_system(username: str):
     status[username] = Status.preprocessing_data
     sentiment_reviews = sentiment_analysis(reviews)
     merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
+    if len(merged_reviews) == 0:
+        status[username] = Status.failed_no_data
+        return
     weights = [a + b for a, b in merged_reviews[["user_rating", "compound"]].values]
     user_movie_ids = set(merged_reviews["imdb_id"].to_list())
     complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
@@ -107,6 +109,9 @@ def recommendation_system(username: str):
         all_movie_ids=preprocessed_trending_movies_ids,
         k=10
     )
+    if len(recs) == 0:
+        status[username] = Status.failed_no_available_recommendations 
+        return
     recommendations[username] = get_movies(recs)
 
     status[username] = Status.finished
@@ -122,29 +127,16 @@ def check_status(username: str):
     if username not in status:
         raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f"The recommendation system has not run for {username}, \
+                detail=f"the recommendation system has not run for {username}, \
                         post /usernames/ to start it."
         )
-    match status[username]:
-        case Status.failed_invalid_username:
-            raise HTTPException(
-                    status_code=HTTPStatus.NOT_FOUND, 
-                    detail=f"Invalid Letterboxd username: {username}. \
-                            retry if this is not the case"
-            )
-        case Status.failed_no_reviews:
-            raise HTTPException(
-                    status_code=HTTPStatus.NOT_FOUND,
-                    detail=f"No rated and reviewed movies found for {username}, \
-                            retry if this is not the case."
-            )
-        case Status.failed_scraping:
-            raise HTTPException(
-                    status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-                    detail=f"Failed while scraping Letterboxd data for {username}."
-            )
-        case ok_status:
-            return ok_status
+    username_status = status[username]
+    if username_status in (Status.failed_invalid_username, Status.failed_no_reviews):
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=username_status)
+    elif username_status in (Status.failed_scraping, Status.failed_no_data, Status.failed_no_recommendations):
+        raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=username_status)
+    else:
+        return username_status 
 
 @app.get("/movies/", response_model=list[Movie])
 def get_recommend_movies(username):
