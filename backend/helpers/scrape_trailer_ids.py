@@ -68,7 +68,7 @@ def scrape_trailer_ids(movie_names: list[str], release_years: list[str]) -> list
         trailer_ids.append(video_id)
     return trailer_ids
 
-merged_trending_movies = pd.read_csv(Path.merged_trending_movies)
+merged_trending_movies = pd.read_csv(Path.MERGED_TRENDING_MOVIES)
 strings = lambda xs: [str(x) if x else "" for x in xs]
 release_years = strings(merged_trending_movies["release_year"].values)
 movie_names = strings(merged_trending_movies["original_title"].values)
@@ -78,5 +78,5 @@ trailer_ids = scrape_trailer_ids_with_driver(movie_names, release_years)
 result = pd.DataFrame()
 result["imdb_id"] = merged_trending_movies["imdb_id"]
 result["trailer_id"] = trailer_ids
-result.to_csv(Path.trending_movie_trailers)
+result.to_csv(Path.TRENDING_MOVIE_TRAILERS)
 

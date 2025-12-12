@@ -22,10 +22,10 @@ def initialize_movies_dataset() -> None:
     clean_title = lambda s: "" if pd.isna(s) else " ".join(re.sub(r"[^a-z0-9 ]", " ", s.lower()).split())
     print("preparing dataset...")
     movie_rows = []
-    for file in tqdm(os.listdir(Path.movie_dataset_folder)):
+    for file in tqdm(os.listdir(Path.MOVIE_DATASET_FOLDER)):
         if not (file.startswith("movies_batch_") and file.endswith(".json")):
             continue
-        path = os.path.join(Path.movie_dataset_folder, file)
+        path = os.path.join(Path.MOVIE_DATASET_FOLDER, file)
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         for movie in data:
@@ -66,7 +66,7 @@ def initialize_movies_dataset() -> None:
             })
     print("saving dataset...")
     movies = pd.DataFrame(movie_rows)
-    movies.to_csv(Path.movies)
+    movies.to_csv(Path.MOVIES)
     print("done!")
 
 
@@ -76,8 +76,8 @@ def merge_trending_movies_dataset() -> None:
     https://www.kaggle.com/datasets/amitksingh2103/trending-movies-over-the-years
     """
     print("merging trending movies dataset...")
-    movies = pd.read_csv(Path.movies)
-    trending_movies = pd.read_csv(Path.trending_movies)
+    movies = pd.read_csv(Path.MOVIES)
+    trending_movies = pd.read_csv(Path.TRENDING_MOVIES)
     clean_title = lambda s: "" if pd.isna(s) else " ".join(re.sub(r"[^a-z0-9 ]", " ", s.lower()).split())
     date_year = lambda date: float(str(date)[:4]) if date else None
     release_years = trending_movies["release_date"].apply(date_year).to_list()
@@ -100,7 +100,7 @@ def merge_trending_movies_dataset() -> None:
         "genres", "plot", "poster_url"
         ])
     print("saving result...")
-    result.to_csv(Path.merged_trending_movies)
+    result.to_csv(Path.MERGED_TRENDING_MOVIES)
     print("done!")
 
 initialize_movies_dataset()

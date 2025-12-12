@@ -22,7 +22,7 @@ def split_csv_by_lines(input_file, output_prefix, max_lines):
                         outfile.close()
                     
                     # Define the new output file name
-                    output_file_path = os.path.join(Path.preprocessed_movies_folder, f'{output_prefix}{file_count}.csv')
+                    output_file_path = os.path.join(Path.PREPROCESSED_MOVIES_FOLDER, f'{output_prefix}{file_count}.csv')
                     outfile = open(output_file_path, 'w')
                     
                     # Write the header to the new file
@@ -48,7 +48,7 @@ def split_csv_by_lines(input_file, output_prefix, max_lines):
 
 
 split_csv_by_lines(
-        input_file=Path.preprocessed_movies, 
+        input_file=Path.PREPROCESSED_MOVIES, 
         output_prefix='split_', 
         max_lines=12500,
 )

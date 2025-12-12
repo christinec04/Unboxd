@@ -118,4 +118,4 @@ def preprocess_movie_dataset(input_path: str, output_path: str) -> None:
     df.to_csv(output_path, index=False)
     print(f"Numerized and processed dataset saved to: {output_path}")
 
-preprocess_movie_dataset(input_path=Path.movies, output_path=Path.preprocessed_movies)
+preprocess_movie_dataset(input_path=Path.MOVIES, output_path=Path.PREPROCESSED_MOVIES)

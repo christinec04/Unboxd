@@ -5,18 +5,18 @@ class UsernameRequest(BaseModel):
     username: str
 
 class Status(str, Enum):
-    starting = "Starting."
-    validating_username = "Validating Letterboxd username."
-    failed_invalid_username = "Failed: invalid Letterboxd username."
-    waiting_for_scraper = "Waiting for scraper."
-    scraping_reviews = "Scraping the user's reviews."
-    failed_no_reviews = "Failed: no ratings and reviews to scrape for the user."
-    failed_scraping = "Failed: error while scraping."
-    preprocessing_data = "Preprocessing data."
-    failed_no_data = "Failed: no data available about the user's rated and reviews movies."
-    finding_recommendation = "Finding recommendations."
-    failed_no_recommendations = "Failed: no trending movies, unrated and unreviewd by the user, are available for recommendation."
-    finished = "Finished."
+    STARTING = "Starting."
+    VALIDATING_USERNAME = "Validating Letterboxd username."
+    FAILED_INVALID_USERNAME = "Failed: invalid Letterboxd username."
+    WAITING_FOR_SCRAPER = "Waiting for scraper."
+    SCRAPING_REVIEWS = "Scraping the user's reviews."
+    FAILED_NO_REVIEWS = "Failed: no ratings and reviews to scrape for the user."
+    FAILED_SCRAPING = "Failed: error while scraping."
+    PREPROCESSING_DATA = "Preprocessing data."
+    FAILED_NO_DATA = "Failed: no data available about the user's rated and reviews movies."
+    FINDING_RECOMMENDATION = "Finding recommendations."
+    FAILED_NO_RECOMMENDATIONS = "Failed: no trending movies, unrated and unreviewd by the user, are available for recommendation."
+    FINISHED = "Finished."
 
 class Movie(BaseModel):
     movieId: str

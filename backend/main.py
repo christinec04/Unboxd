@@ -20,15 +20,15 @@ scraper_lock = Lock()
 status: dict[str, Status] = dict()
 recommendations: dict[str, list[Movie]] = dict()
 
-movies = pd.read_csv(Path.movies)
-trending_movies = pd.read_csv(Path.merged_trending_movies)
+movies = pd.read_csv(Path.MOVIES)
+trending_movies = pd.read_csv(Path.MERGED_TRENDING_MOVIES)
 
-complete_preprocessed_trending_movies = pd.read_csv(Path.preprocessed_trending_movies)
+complete_preprocessed_trending_movies = pd.read_csv(Path.PREPROCESSED_TRENDING_MOVIES)
 indexed_preprocessed_trending_movies = complete_preprocessed_trending_movies.drop(columns=["imdb_id"]).to_numpy()
 preprocessed_trending_movies = np.delete(arr=indexed_preprocessed_trending_movies, obj=0, axis=1)
 preprocessed_trending_movies_ids = complete_preprocessed_trending_movies["imdb_id"].to_list()
 
-trailers = pd.read_csv(Path.trending_movie_trailers)
+trailers = pd.read_csv(Path.TRENDING_MOVIE_TRAILERS)
 trailer_ids = {trailer.imdb_id:trailer.trailer_id for trailer in trailers.itertuples()}
 
 app = FastAPI()
@@ -71,36 +71,36 @@ def recommendation_system(username: str):
     updating the `status` of the system for `username` along the way, and storing the
     the result in `recommendations` for `username`
     """
-    status[username] = Status.validating_username
+    status[username] = Status.VALIDATING_USERNAME
     profile_response = requests.get(f"https://www.letterboxd.com/{username}/")
     if profile_response.status_code != 200:
-        status[username] = Status.failed_invalid_username
+        status[username] = Status.FAILED_INVALID_USERNAME
         return
 
-    status[username] = Status.waiting_for_scraper
+    status[username] = Status.WAITING_FOR_SCRAPER
     with scraper_lock:
-        status[username] = Status.scraping_reviews
+        status[username] = Status.SCRAPING_REVIEWS
         try:
             reviews = scrape_reviews(username)
         except:
-            status[username] = Status.failed_scraping
+            status[username] = Status.FAILED_SCRAPING
             return
     if len(reviews) == 0:
-        status[username] = Status.failed_no_reviews
+        status[username] = Status.FAILED_NO_REVIEWS
         return
 
-    status[username] = Status.preprocessing_data
+    status[username] = Status.PREPROCESSING_DATA
     sentiment_reviews = sentiment_analysis(reviews)
     merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
     if len(merged_reviews) == 0:
-        status[username] = Status.failed_no_data
+        status[username] = Status.FAILED_NO_DATA
         return
     weights = [a + b for a, b in merged_reviews[["user_rating", "compound"]].values]
     user_movie_ids = set(merged_reviews["imdb_id"].to_list())
     complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
     preprocessed_user_movies = complete_preprocessed_user_movies.drop(columns=["imdb_id"]).to_numpy()
 
-    status[username] = Status.finding_recommendation
+    status[username] = Status.FINDING_RECOMMENDATION
     recs = recommend_movies(
         user_movies=preprocessed_user_movies,
         weights=weights,
@@ -110,15 +110,15 @@ def recommendation_system(username: str):
         k=10
     )
     if len(recs) == 0:
-        status[username] = Status.failed_no_available_recommendations 
+        status[username] = Status.FAILED_NO_RECOMMENDATIONS 
         return
     recommendations[username] = get_movies(recs)
 
-    status[username] = Status.finished
+    status[username] = Status.FINISHED
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
-    status[request.username] = Status.starting
+    status[request.username] = Status.STARTING
     background_tasks.add_task(recommendation_system, request.username)
     return
 
@@ -131,9 +131,9 @@ def check_status(username: str):
                         post /usernames/ to start it."
         )
     username_status = status[username]
-    if username_status in (Status.failed_invalid_username, Status.failed_no_reviews):
+    if username_status in (Status.FAILED_INVALID_USERNAME, Status.FAILED_NO_REVIEWS):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=username_status)
-    elif username_status in (Status.failed_scraping, Status.failed_no_data, Status.failed_no_recommendations):
+    elif username_status in (Status.FAILED_SCRAPING, Status.FAILED_NO_DATA, Status.FAILED_NO_RECOMMENDATIONS):
         raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=username_status)
     else:
         return username_status 

@@ -48,6 +48,6 @@ def sentiment_analysis(df: pd.DataFrame) -> pd.DataFrame:
 if __name__ == "__main__":
     from paths import Path
     username = sys.argv[1]
-    df = sentiment_analysis(pd.read_csv(os.path.join(Path.reviews_folder, f"{username}.csv")))
-    df.to_csv(os.path.join(Path.sentiment_reviews_folder, f"{username}.csv")) 
+    df = sentiment_analysis(pd.read_csv(os.path.join(Path.REVIEWS_FOLDER, f"{username}.csv")))
+    df.to_csv(os.path.join(Path.SENTIMENT_REVIEWS_FOLDER, f"{username}.csv")) 
 
