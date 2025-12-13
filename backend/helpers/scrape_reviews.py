@@ -72,5 +72,5 @@ if __name__ == "__main__":
     from paths import Path
     username = sys.argv[1]
     data = scrape_reviews(username, print_status=True)
-    data.to_csv(os.path.join(Path.reviews_folder, f"{username}.csv"))
+    data.to_csv(os.path.join(Path.REVIEWS_FOLDER, f"{username}.csv"))
 
