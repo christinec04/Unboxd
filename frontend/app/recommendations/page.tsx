@@ -42,7 +42,8 @@ export default function RecommendationsPage() {
       const response = await api.get('/status/', { params: { username } });
       const newStatus = response.data;
       setStatus(newStatus);
-
+      console.log(newStatus);
+      
       if (newStatus == Status.FINISHED) {
         console.log("Finished");
         clearInterval(intervalId);

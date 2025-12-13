@@ -1,43 +1,42 @@
-import React from "react";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty"
 import { Status } from "@/app/api/types.gen";
 import { Progress } from "@/components/ui/progress";
+import { startTurbopackTraceServer } from "next/dist/build/swc/generated-native";
 
 export function Loading({ status }: { status: Status }) {
-  const [progress, setProgress] = React.useState(0);
+  const progress = {
+    [Status.STARTING]: 10,
+    [Status.VALIDATING_USERNAME]: 20,
+    [Status.WAITING_FOR_SCRAPER]: 30,
+    [Status.SCRAPING_THE_USER_REVIEWS]: 40,
+    [Status.PREPROCESSING_DATA]: 50,
+    [Status.FINDING_RECOMMENDATIONS]: 80,
+    [Status.FINISHED]: 100
+  };
 
-  React.useEffect(() => {
-    let timer: NodeJS.Timeout;
+  type LoadingStatus =
+  | Status.STARTING
+  | Status.VALIDATING_USERNAME
+  | Status.WAITING_FOR_SCRAPER
+  | Status.SCRAPING_THE_USER_REVIEWS
+  | Status.PREPROCESSING_DATA
+  | Status.FINDING_RECOMMENDATIONS;
 
-    if (status === Status.STARTING) {
-      // Increment progress smoothly until ~90%
-      timer = setInterval(() => {
-        setProgress((prev) => {
-          if (prev < 90) return prev + 2; // step size
-          return prev;
-        });
-      }, 200); // every 200ms
-    }
-
-    if (status === Status.FINISHED) {
-      // Jump to 100% when finished
-      setProgress(100);
-    }
-
-    if (!status || status === undefined) {
-      // Reset when idle or failed
-      setProgress(0);
-    }
-
-    return () => clearInterval(timer);
-  }, [status]);
-
-  // Only render while loading
-  if (status !== Status.STARTING) return null;
 
   return (
     <section className="py-24 relative overflow-hidden flex flex-1 items-end justify-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-center">
-        <Progress value={progress} className="w-[60%]" />
+        <Empty>
+          <EmptyHeader>
+            <EmptyTitle>{status}</EmptyTitle>
+            <Progress value={progress[status as LoadingStatus]} className="w-[100%]" />
+          </EmptyHeader>
+        </Empty>
       </div>
     </section>
   );
