@@ -27,7 +27,7 @@ def merge_sentiment_reviews_dataset(movies: pd.DataFrame, reviews: pd.DataFrame)
 if __name__ == "__main__":
     from paths import Path
     username = sys.argv[1]
-    movies = pd.read_csv(os.path.join(Path.movies))
-    sentiment_reviews = pd.read_csv(os.path.join(Path.sentiment_reviews_folder, f"{username}.csv"))
+    movies = pd.read_csv(os.path.join(Path.MOVIES))
+    sentiment_reviews = pd.read_csv(os.path.join(Path.SENTIMENT_REVIEWS_FOLDER, f"{username}.csv"))
     merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
-    merged_reviews.to_csv(os.path.join(Path.merged_reviews_folder, f"{username}.csv"))
+    merged_reviews.to_csv(os.path.join(Path.MERGED_REVIEWS_FOLDER, f"{username}.csv"))
