@@ -34,7 +34,7 @@ export default function HomePage() {
       setStatus(newStatus);
       setMessage(newStatus);
 
-      if (status == Status.FINISHED) {
+      if (newStatus == Status.FINISHED) {
         console.log("Finished");
         clearInterval(intervalId);
         router.push(`/recommendations?username=${username}`);
@@ -57,8 +57,7 @@ export default function HomePage() {
     e.preventDefault();
 
     if (!username) { return; }
-
-    setMessage(description); // reset error message if any
+    
     setStatus(Status.STARTING);
 
     try {
