@@ -32,9 +32,9 @@ export function Loading({ status }: { status: Status }) {
     <section className="py-24 relative overflow-hidden flex flex-1 items-end justify-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative flex justify-center">
         <Empty>
-          <EmptyHeader>
+          <EmptyHeader className="w-[100%]">
             <EmptyTitle>{status}</EmptyTitle>
-            <Progress value={progress[status as LoadingStatus]} className="w-[100%]" />
+            <Progress value={progress[status as LoadingStatus]} />
           </EmptyHeader>
         </Empty>
       </div>
