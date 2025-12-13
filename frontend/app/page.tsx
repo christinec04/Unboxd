@@ -13,21 +13,43 @@ import Wave from 'react-wavify';
 import api from "@/app/api";
 
 export default function HomePage() {
+  type Undefinable<Status> = Status | undefined;
+
   const description = "Please enter your Letterboxd username, not your display name.";
   const [username, setUsername] = useState("");
-  const [status, setStatus] = useState<Status | null>(null);
+  const [status, setStatus] = useState<Undefinable<Status>>(undefined);
   const router = useRouter();
-  const { theme } = useTheme();
-  const [errorMessage, setErrorMessage] = useState(description);
+  const [message, setMessage] = useState<Undefinable<string>>(description);
 
-  const getStatus = async () => {
+  const getStatus = async (intervalId: NodeJS.Timeout) => {
+    const failed: Undefinable<Status>[] = [Status.FAILED_INVALID_USERNAME, 
+      Status.FAILED_NO_RATINGS_AND_REVIEWS_TO_SCRAPE_FOR_THE_USER,
+      Status.FAILED_ERROR_WHILE_SCRAPING,
+      Status.FAILED_NO_DATA_AVAILABLE_ABOUT_THE_USER_RATED_AND_REVIEWS_MOVIES,
+      Status.FAILED_NO_TRENDING_MOVIES_NOT_ALREADY_REVIEWED_ARE_AVAILABLE_FOR_RECOMMENDATION];
+
     try {
       const response = await api.get('/status/', { params: { username } });
-      setStatus(response.data);
+      const newStatus = response.data;
+      setStatus(newStatus);
+      setMessage(newStatus);
+
+      if (status == Status.FINISHED) {
+        console.log("Finished");
+        clearInterval(intervalId);
+        router.push(`/recommendations?username=${username}`);
+      }
+
+      if (failed.includes(newStatus)){
+        clearInterval(intervalId);
+        setMessage("Error: " + newStatus);
+        setStatus(undefined);
+      } 
     }
     catch (error) {
-      console.error(error);
-      throw error;
+      clearInterval(intervalId);
+      setStatus(undefined);
+      setMessage("Error: " + (error instanceof Error ? error.message : "Unknown error"));
     }
   };
 
@@ -36,26 +58,18 @@ export default function HomePage() {
 
     if (!username) { return; }
 
-    setErrorMessage(description); // reset error message if any
+    setMessage(description); // reset error message if any
+    setStatus(Status.STARTING);
 
     try {
       await api.post('/usernames/', { username: username });
-      const interval = setInterval(getStatus, 2000);
-      console.log(status)
-
-      if (status === Status.FINISHED) {
-        clearInterval(interval);
-      }
+      const intervalId = setInterval(() => getStatus(intervalId), 2000);
     }
     catch (error) {
-      console.error(error);
-      setStatus(null);
-      setErrorMessage("Error: " + (error instanceof Error ? error.message : "Unknown error"));
+      setStatus(undefined);
+      setMessage("Error: " + (error instanceof Error ? error.message : "Unknown error"));
       return;
     }
-
-    // Navigate to next page
-    //router.push(`/recommendations?username=${username}`);
   };
 
   return (
@@ -87,13 +101,13 @@ export default function HomePage() {
 
                 <InputGroupAddon align="inline-end">
                   {(status !== Status.FINISHED 
-                  && status !== null) 
+                  && status !== undefined) 
                   && <Spinner />}
                 </InputGroupAddon>
               </InputGroup>
             </form>
 
-            <FieldDescription className="ml-2">{errorMessage}</FieldDescription>
+            <FieldDescription className="ml-2">{message}</FieldDescription>
           </div>
         </div>
       </div>
@@ -118,8 +132,8 @@ export default function HomePage() {
       >
         <defs>
           <linearGradient id="gradient" gradientTransform="rotate(90)">
-            <stop offset="10%"  stopColor={theme === "dark" ? "var(--color-sky-700)" : "var(--color-blue-300)"} />
-            <stop offset="90%" stopColor={theme === "dark" ? "var(--color-slate-800)" : "var(--color-blue-100)"} />
+            <stop offset="10%"  stopColor="var(--color-blue-300)" />
+            <stop offset="90%" stopColor="var(--color-blue-100)" />
           </linearGradient>
         </defs>
       </Wave>

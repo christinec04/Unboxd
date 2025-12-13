@@ -61,16 +61,16 @@ export type Movie = {
  */
 export enum Status {
     STARTING = 'Starting.',
-    VALIDATING_LETTERBOXD_USERNAME = 'Validating Letterboxd username.',
-    'FAILED:_INVALID_LETTERBOXD_USERNAME' = 'Failed: invalid Letterboxd username.',
+    VALIDATING_USERNAME = 'Validating username.',
+    FAILED_INVALID_USERNAME = 'Failed invalid username.',
     WAITING_FOR_SCRAPER = 'Waiting for scraper.',
-    'SCRAPING_THE_USER\'S_REVIEWS' = 'Scraping the user\'s reviews.',
-    'FAILED:_NO_RATINGS_AND_REVIEWS_TO_SCRAPE_FOR_THE_USER' = 'Failed: no ratings and reviews to scrape for the user.',
-    'FAILED:_ERROR_WHILE_SCRAPING' = 'Failed: error while scraping.',
+    SCRAPING_THE_USER_REVIEWS = 'Scraping the user reviews.',
+    FAILED_NO_RATINGS_AND_REVIEWS_TO_SCRAPE_FOR_THE_USER = 'Failed no ratings and reviews to scrape for the user.',
+    FAILED_ERROR_WHILE_SCRAPING = 'Failed error while scraping.',
     PREPROCESSING_DATA = 'Preprocessing data.',
-    'FAILED:_NO_DATA_AVAILABLE_ABOUT_THE_USER\'S_RATED_AND_REVIEWS_MOVIES' = 'Failed: no data available about the user\'s rated and reviews movies.',
+    FAILED_NO_DATA_AVAILABLE_ABOUT_THE_USER_RATED_AND_REVIEWS_MOVIES = 'Failed no data available about the user rated and reviews movies.',
     FINDING_RECOMMENDATIONS = 'Finding recommendations.',
-    'FAILED:_NO_TRENDING_MOVIES,_UNRATED_AND_UNREVIEWED_BY_THE_USER,_ARE_AVAILABLE_FOR_RECOMMENDATION' = 'Failed: no trending movies, unrated and unreviewed by the user, are available for recommendation.',
+    FAILED_NO_TRENDING_MOVIES_NOT_ALREADY_REVIEWED_ARE_AVAILABLE_FOR_RECOMMENDATION = 'Failed no trending movies not already reviewed are available for recommendation.',
     FINISHED = 'Finished.'
 }
 
