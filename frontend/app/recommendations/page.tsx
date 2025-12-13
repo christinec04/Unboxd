@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import api from "@/app/api/index";
+import api from "@/app/api";
 import { NavBar } from "@/components/nav-bar";
 import { useRouter } from "next/navigation";
 import { Loading } from "@/components/progress";

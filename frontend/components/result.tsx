@@ -1,6 +1,6 @@
 import { useSearchParams } from "next/dist/client/components/navigation";
 import {ItemGroup} from "@/components/ui/item"
-import { Movie } from "@/app/types"
+import { Movie } from "@/app/api/types.gen"
 import { useState } from "react"
 import YouTube, { YouTubeProps } from "react-youtube";
 import { MovieCard } from "./movie-card";

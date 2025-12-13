@@ -8,14 +8,14 @@ import { FieldDescription } from "@/components/ui/field"
 import { TypeAnimation } from 'react-type-animation';
 import { ModeToggle } from '@/components/theme-toggle';
 import { useTheme } from "next-themes";
-import { Status } from "@/app/types";
+import { Status } from "@/app/api/types.gen";
 import Wave from 'react-wavify';
-import api from "@/app/api/index";
+import api from "@/app/api";
 
 export default function HomePage() {
   const description = "Please enter your Letterboxd username, not your display name.";
   const [username, setUsername] = useState("");
-  const [status, setStatus] = useState<Status>(Status.FINISHED);
+  const [status, setStatus] = useState<Status | null>(null);
   const router = useRouter();
   const { theme } = useTheme();
   const [errorMessage, setErrorMessage] = useState(description);
@@ -23,7 +23,7 @@ export default function HomePage() {
   const getStatus = async () => {
     try {
       const response = await api.get('/status/', { params: { username } });
-      setStatus(response.data.status);
+      setStatus(response.data);
     }
     catch (error) {
       console.error(error);
@@ -36,11 +36,12 @@ export default function HomePage() {
 
     if (!username) { return; }
 
-    setErrorMessage(description);
+    setErrorMessage(description); // reset error message if any
 
     try {
       await api.post('/usernames/', { username: username });
       const interval = setInterval(getStatus, 2000);
+      console.log(status)
 
       if (status === Status.FINISHED) {
         clearInterval(interval);
@@ -48,13 +49,13 @@ export default function HomePage() {
     }
     catch (error) {
       console.error(error);
-      setStatus(Status.FAILED);
+      setStatus(null);
       setErrorMessage("Error: " + (error instanceof Error ? error.message : "Unknown error"));
       return;
     }
 
     // Navigate to next page
-    router.push(`/recommendations?username=${username}`);
+    //router.push(`/recommendations?username=${username}`);
   };
 
   return (
@@ -85,7 +86,9 @@ export default function HomePage() {
                   autoComplete="off" />
 
                 <InputGroupAddon align="inline-end">
-                  {(status !== Status.FINISHED && status !== Status.FAILED) && <Spinner />}
+                  {(status !== Status.FINISHED 
+                  && status !== null) 
+                  && <Spinner />}
                 </InputGroupAddon>
               </InputGroup>
             </form>

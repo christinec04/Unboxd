@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/tooltip"
 import { ExternalLinkIcon } from "lucide-react"
 import Image from "next/image"
-import { Movie } from "@/app/types"
+import { Movie } from "@/app/api/types.gen"
 import Link from "next/link"
 import { Play, CirclePlay } from "lucide-react"
 
