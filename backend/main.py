@@ -129,12 +129,12 @@ def check_status(username: str):
                         post /usernames/ to start it."
         )
     username_status = status[username]
-    # if username_status in (Status.FAILED_INVALID_USERNAME, Status.FAILED_NO_REVIEWS):
-    #     raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=username_status)
-    # elif username_status in (Status.FAILED_SCRAPING, Status.FAILED_NO_DATA, Status.FAILED_NO_RECOMMENDATIONS):
-    #     raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=username_status)
-    # else:
-    return username_status 
+    if username_status in (Status.FAILED_INVALID_USERNAME, Status.FAILED_NO_REVIEWS):
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=username_status)
+    elif username_status in (Status.FAILED_SCRAPING, Status.FAILED_NO_DATA, Status.FAILED_NO_RECOMMENDATIONS):
+        raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=username_status)
+    else:
+        return username_status 
 
 @app.get("/movies/", response_model=list[Movie])
 def get_recommend_movies(username: str):

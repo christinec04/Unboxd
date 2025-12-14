@@ -5,25 +5,18 @@ import { useSearchParams } from "next/navigation";
 import api from "@/app/api";
 import { NavBar } from "@/components/nav-bar";
 import { useRouter } from "next/navigation";
-import { Loading } from "@/components/loading";
 import { Result } from "@/components/result";
-import { Error } from "@/components/error";
+import { StatusIndicator } from "@/components/status-indicator";
 import { Status } from "@/app/api/types.gen";
 
-export default function RecommendationsPage() {
-  type Undefinable<Status> = Status | undefined;
+type ExtendedStatus = Status | "ERROR";
 
+export default function RecommendationsPage() {
   const searchParams = useSearchParams();
   const [username, setUsername] = useState(searchParams.get("username"));
   const [movies, setMovies] = useState([]);
   const router = useRouter();
-  const [status, setStatus] = useState<Status>(Status.STARTING);
-
-  const failed: Undefinable<Status>[] = [Status.FAILED_INVALID_USERNAME, 
-    Status.FAILED_NO_RATINGS_AND_REVIEWS_TO_SCRAPE_FOR_THE_USER,
-    Status.FAILED_ERROR_WHILE_SCRAPING,
-    Status.FAILED_NO_DATA_AVAILABLE_ABOUT_THE_USER_RATED_AND_REVIEWS_MOVIES,
-    Status.FAILED_NO_TRENDING_MOVIES_NOT_ALREADY_REVIEWED_ARE_AVAILABLE_FOR_RECOMMENDATION];
+  const [status, setStatus] = useState<ExtendedStatus>(Status.STARTING);
   
   const onLoad = async () => {
     if (!username) { return; }
@@ -33,7 +26,8 @@ export default function RecommendationsPage() {
       const intervalId = setInterval(() => getStatus(intervalId), 2000);
     } 
     catch (error) {
-      // error handle
+      console.log(error);
+      setStatus("ERROR");
     }
   };
 
@@ -49,13 +43,11 @@ export default function RecommendationsPage() {
         clearInterval(intervalId);
         fetchMovies();
       }
-
-      if (failed.includes(newStatus)){
-        clearInterval(intervalId);
-      } 
     } 
     catch (error) {
       clearInterval(intervalId);
+      setStatus("ERROR");
+      console.log(error);
     }
   };
 
@@ -66,7 +58,8 @@ export default function RecommendationsPage() {
       console.log(res.data)
     }
     catch(error) {
-
+      setStatus("ERROR");
+      console.log(error);
     }
   };
 
@@ -85,9 +78,8 @@ export default function RecommendationsPage() {
     <div className="min-h-screen w-full bg-background flex flex-col">
       <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
 
-      {status == Status.FINISHED && <Result movies={movies} />}
-      {failed.includes(status) && <Error message={status}/>}
-      {status != Status.FINISHED && !failed.includes(status) && <Loading status={status}/>} {/* loading doesn't work atm */}
+      {status === Status.FINISHED && <Result movies={movies} />}
+      {status !== Status.FINISHED && <StatusIndicator status={status}/>}
     
     </div>
   );

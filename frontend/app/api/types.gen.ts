@@ -60,18 +60,18 @@ export type Movie = {
  * Status
  */
 export enum Status {
-    STARTING = 'Starting.',
-    VALIDATING_USERNAME = 'Validating username.',
-    FAILED_INVALID_USERNAME = 'Failed invalid username.',
-    WAITING_FOR_SCRAPER = 'Waiting for scraper.',
-    SCRAPING_THE_USER_REVIEWS = 'Scraping the user reviews.',
-    FAILED_NO_RATINGS_AND_REVIEWS_TO_SCRAPE_FOR_THE_USER = 'Failed no ratings and reviews to scrape for the user.',
-    FAILED_ERROR_WHILE_SCRAPING = 'Failed error while scraping.',
-    PREPROCESSING_DATA = 'Preprocessing data.',
-    FAILED_NO_DATA_AVAILABLE_ABOUT_THE_USER_RATED_AND_REVIEWS_MOVIES = 'Failed no data available about the user rated and reviews movies.',
-    FINDING_RECOMMENDATIONS = 'Finding recommendations.',
-    FAILED_NO_TRENDING_MOVIES_NOT_ALREADY_REVIEWED_ARE_AVAILABLE_FOR_RECOMMENDATION = 'Failed no trending movies not already reviewed are available for recommendation.',
-    FINISHED = 'Finished.'
+    STARTING = 'Starting',
+    VALIDATING_USERNAME = 'Validating username',
+    FAILED_INVALID_USERNAME = 'Failed. Invalid username',
+    WAITING_FOR_SCRAPER = 'Waiting for scraper',
+    SCRAPING_THE_USER_REVIEWS = 'Scraping the user reviews',
+    FAILED_NO_REVIEWS_TO_SCRAPE_FOR_THE_USER = 'Failed. No reviews to scrape for the user',
+    FAILED_ERROR_WHILE_SCRAPING = 'Failed. Error while scraping',
+    PREPROCESSING_DATA = 'Preprocessing data',
+    FAILED_NO_DATA_AVAILABLE_ABOUT_THE_USER_REVIEWED_MOVIES = 'Failed. No data available about the user-reviewed movies',
+    FINDING_RECOMMENDATIONS = 'Finding recommendations',
+    FAILED_NO_TRENDING_MOVIES_NOT_ALREADY_REVIEWED_ARE_AVAILABLE_FOR_RECOMMENDATION = 'Failed. No trending movies not already reviewed are available for recommendation',
+    FINISHED = 'Finished'
 }
 
 /**
