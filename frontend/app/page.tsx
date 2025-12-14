@@ -1,43 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
-import { Spinner } from "@/components/ui/spinner";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { useRouter } from "next/navigation";
 import { FieldDescription } from "@/components/ui/field"
 import { TypeAnimation } from 'react-type-animation';
 import { ModeToggle } from '@/components/theme-toggle';
-import { useTheme } from "next-themes";
-import Wave from 'react-wavify'
-import api from "@/app/api/index";
+import Wave from 'react-wavify';
 
 export default function HomePage() {
   const description = "Please enter your Letterboxd username, not your display name.";
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { theme } = useTheme();
-  const [errorMessage, setErrorMessage] = useState(description);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!username) { return; }
-
-    setLoading(true);
-    setErrorMessage(description);
-
-    try {
-      await api.post('/usernames/', { username: username });
-    }
-    catch (error) {
-      console.error(error);
-      setLoading(false);
-      setErrorMessage("Error: " + (error instanceof Error ? error.message : "Unknown error"));
-      return;
-    }
-
-    // Navigate to next page
     router.push(`/recommendations?username=${username}`);
   };
 
@@ -67,14 +45,10 @@ export default function HomePage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   autoComplete="off" />
-
-                <InputGroupAddon align="inline-end">
-                  {loading && <Spinner />}
-                </InputGroupAddon>
               </InputGroup>
             </form>
 
-            <FieldDescription className="ml-2">{errorMessage}</FieldDescription>
+            <FieldDescription className="ml-2">{description}</FieldDescription>
           </div>
         </div>
       </div>
@@ -99,8 +73,8 @@ export default function HomePage() {
       >
         <defs>
           <linearGradient id="gradient" gradientTransform="rotate(90)">
-            <stop offset="10%"  stopColor={theme === "dark" ? "var(--color-sky-700" : "var(--color-blue-300)"} />
-            <stop offset="90%" stopColor={theme === "dark" ? "var(--color-slate-800" : "var(--color-blue-100)"} />
+            <stop offset="10%"  stopColor="var(--color-blue-300)" />
+            <stop offset="90%" stopColor="var(--color-blue-100)" />
           </linearGradient>
         </defs>
       </Wave>

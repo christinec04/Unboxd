@@ -11,7 +11,6 @@ from helpers.paths import Path
 from helpers.models import UsernameRequest, Status, Movie
 from helpers.scrape_reviews import scrape_reviews 
 from helpers.sentiment import sentiment_analysis
-from helpers.scrape_reviews import scrape_reviews
 from helpers.recommender import recommend_movies
 from helpers.movieswreviews import merge_sentiment_reviews_dataset
 from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
@@ -88,7 +87,6 @@ def recommendation_system(username: str):
     if len(reviews) == 0:
         status[username] = Status.FAILED_NO_REVIEWS
         return
-
     status[username] = Status.PREPROCESSING_DATA
     sentiment_reviews = sentiment_analysis(reviews)
     merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
@@ -139,7 +137,7 @@ def check_status(username: str):
         return username_status 
 
 @app.get("/movies/", response_model=list[Movie])
-def get_recommend_movies(username):
+def get_recommend_movies(username: str):
     if username not in recommendations:
         raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
@@ -151,4 +149,3 @@ def get_recommend_movies(username):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
-

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "openapi-ts": "openapi-ts"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -30,6 +31,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.89.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
