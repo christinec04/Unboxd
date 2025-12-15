@@ -7,6 +7,7 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
 from threading import Lock
+from sklearn.preprocessing import StandardScaler
 from helpers.paths import Path
 from helpers.models import UsernameRequest, Status, Movie
 from helpers.scrape_reviews import scrape_reviews 
@@ -93,7 +94,10 @@ def recommendation_system(username: str):
     if len(merged_reviews) == 0:
         status[username] = Status.FAILED_NO_DATA
         return
-    weights = [a + b for a, b in merged_reviews[["user_rating", "compound"]].values]
+
+    scaled_user_ratings = StandardScaler().fit_transform(merged_reviews["user_rating"].to_numpy().reshape(-1, 1))
+    sentiment_scores = merged_reviews["compound"].to_list()
+    weights = [a + b for a, b in zip(sentiment_scores, scaled_user_ratings)]
     user_movie_ids = set(merged_reviews["imdb_id"].to_list())
     complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
     preprocessed_user_movies = complete_preprocessed_user_movies.drop(columns=["imdb_id"]).to_numpy()
