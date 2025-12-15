@@ -7,13 +7,14 @@ import {
 } from "@/components/ui/empty";
 import { Button } from "@/components/ui/button";
 import { RefreshCcwIcon } from "lucide-react";
-import { Status } from "@/app/api/types.gen";
 import { Spinner } from "@/components/ui/spinner";
+import { BackendError, ExtendedStatus } from "@/app/recommendations/page";
 
-type ExtendedStatus = Status | "ERROR";
-
-export function StatusIndicator({status}: {status: ExtendedStatus}) {
-  const isError = status === "ERROR";
+export function StatusIndicator({status, backendError}: {status: ExtendedStatus, backendError: BackendError}) {
+  const isUnexpectedError = backendError === BackendError.UNEXPECTED;
+  const isUnclearError = backendError === BackendError.UNCLEAR_CAUSE_OF_FAILURE;
+  const isImpossibleRequestError = backendError === BackendError.IMPOSSIBLE_REQUEST;
+  const isError = isUnexpectedError || isUnclearError || isImpossibleRequestError;
 
   const refreshPage = () => {
     window.location.reload(); 
@@ -30,12 +31,16 @@ export function StatusIndicator({status}: {status: ExtendedStatus}) {
             </EmptyTitle>
 
             <EmptyDescription>
-              {isError && "Something went wrong. Please try searching for another username" }
+              {isUnclearError && "If this is not the case, blame Letterboxd, and please try again" }
+            </EmptyDescription>
+
+            <EmptyDescription>
+              {isUnexpectedError && "Something went wrong, please try again" }
             </EmptyDescription>
           </EmptyHeader>
 
-          {isError && <EmptyContent>
-            <Button variant="outline" size="sm" onClick={refreshPage}>
+          {(isUnclearError|| isUnexpectedError) && <EmptyContent>
+              <Button variant="outline" size="sm" onClick={refreshPage}>
               <RefreshCcwIcon />
               Refresh
             </Button>
