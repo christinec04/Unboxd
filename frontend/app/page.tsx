@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { FieldDescription } from "@/components/ui/field"
 import { TypeAnimation } from 'react-type-animation';
 import { ModeToggle } from '@/components/theme-toggle';
+import { Meta } from '@/app/meta-data'
 import Wave from 'react-wavify';
 
 export default function HomePage() {
@@ -32,7 +33,7 @@ export default function HomePage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-lg space-y-8">
             <TypeAnimation
-              sequence={['Movie Recommendation System']}
+              sequence={[Meta.title, 2000, Meta.description]}
               wrapper="span"
               style={{ fontSize: '2em', display: 'inline-block' }}
             />
@@ -73,8 +74,8 @@ export default function HomePage() {
       >
         <defs>
           <linearGradient id="gradient" gradientTransform="rotate(90)">
-            <stop offset="10%"  stopColor="var(--color-blue-300)" />
-            <stop offset="90%" stopColor="var(--color-blue-100)" />
+            <stop offset="10%"  stopColor="var(--color-blue-900)" />
+            <stop offset="90%" stopColor="var(--color-blue-500)" />
           </linearGradient>
         </defs>
       </Wave>
