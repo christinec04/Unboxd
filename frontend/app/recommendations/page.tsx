@@ -8,8 +8,16 @@ import { useRouter } from "next/navigation";
 import { Result } from "@/components/result";
 import { StatusIndicator } from "@/components/status-indicator";
 import { Status } from "@/app/api/types.gen";
+import { AxiosError, HttpStatusCode } from "axios";
 
-type ExtendedStatus = Status | "ERROR";
+export enum BackendError {
+  NONE = "None",
+  UNEXPECTED = "Unexpected",
+  UNCLEAR_CAUSE_OF_FAILURE = "Unclear cause of failure",
+  IMPOSSIBLE_REQUEST = "Impossible request",
+}
+
+export type ExtendedStatus = Status | "Error";
 
 export default function RecommendationsPage() {
   const searchParams = useSearchParams();
@@ -17,17 +25,19 @@ export default function RecommendationsPage() {
   const [movies, setMovies] = useState([]);
   const router = useRouter();
   const [status, setStatus] = useState<ExtendedStatus>(Status.STARTING);
+  const [backendError, setBackendError] = useState<BackendError>(BackendError.NONE);
   
   const onLoad = async () => {
     if (!username) { return; }
 
     try {
       await api.post('/usernames/', { username: username });
-      const intervalId = setInterval(() => getStatus(intervalId), 2000);
+      const intervalId = setInterval(() => getStatus(intervalId), 5000);
     } 
     catch (error) {
       console.log(error);
-      setStatus("ERROR");
+      setStatus("Error");
+      setBackendError(BackendError.UNEXPECTED);
     }
   };
 
@@ -45,9 +55,21 @@ export default function RecommendationsPage() {
       }
     } 
     catch (error) {
-      clearInterval(intervalId);
-      setStatus("ERROR");
       console.log(error);
+      clearInterval(intervalId);
+      if (!(error instanceof AxiosError) || error.response === undefined) {
+        setStatus("Error");
+        setBackendError(BackendError.UNEXPECTED);
+        return;
+      }
+      setStatus(error.response.data.detail);
+      if (error.status == HttpStatusCode.NotFound) {
+        setBackendError(BackendError.UNCLEAR_CAUSE_OF_FAILURE);
+      } else if (error.status == HttpStatusCode.InternalServerError) {
+        setBackendError(BackendError.IMPOSSIBLE_REQUEST);
+      } else {
+        setBackendError(BackendError.UNEXPECTED);
+      }
     }
   };
 
@@ -58,7 +80,8 @@ export default function RecommendationsPage() {
       console.log(res.data)
     }
     catch(error) {
-      setStatus("ERROR");
+      setStatus("Error");
+      setBackendError(BackendError.UNEXPECTED);
       console.log(error);
     }
   };
@@ -79,7 +102,7 @@ export default function RecommendationsPage() {
       <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
 
       {status === Status.FINISHED && <Result movies={movies} />}
-      {status !== Status.FINISHED && <StatusIndicator status={status}/>}
+      {status !== Status.FINISHED && <StatusIndicator status={status} backendError={backendError} />}
     
     </div>
   );
