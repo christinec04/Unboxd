@@ -1,4 +1,5 @@
 # Unboxd
+A recommendation system for Letterboxd movies.
 
 ## Setup
 \! For further development setup see `DEVELOPMENT.md`
