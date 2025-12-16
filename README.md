@@ -1,5 +1,6 @@
 # Unboxd
 A recommendation system for Letterboxd movies.
+To see screenshots of the prototype and how the classification system works, read `paper.pdf`
 
 ## Setup
 \! For further development setup see `DEVELOPMENT.md`
