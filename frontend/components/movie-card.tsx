@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   Item,
   ItemActions,
@@ -8,17 +8,18 @@ import {
   ItemFooter,
   ItemHeader,
   ItemTitle,
-} from "@/components/ui/item"
+} from "@/components/ui/item";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { ExternalLinkIcon } from "lucide-react"
-import Image from "next/image"
-import { Movie } from "@/app/api/types.gen"
-import Link from "next/link"
-import { Play, CirclePlay } from "lucide-react"
+} from "@/components/ui/tooltip";
+import { ExternalLinkIcon } from "lucide-react";
+import Image from "next/image";
+import { Movie } from "@/app/api/types.gen";
+import Link from "next/link";
+import { Play, CirclePlay } from "lucide-react";
+import { Suspense } from 'react';
 
 interface MovieCardProps extends Movie {
   setTrailer: (movie: Movie) => void;
@@ -26,7 +27,7 @@ interface MovieCardProps extends Movie {
 
 export function MovieCard({ setTrailer, ...movie }: MovieCardProps) {
     return (
-        <>
+        <Suspense>
             <Item key={movie.name} variant="outline" className="bg-accent">
                 {/* Image */}
                 <ItemHeader className="group aspect-[2/3] rounded-sm overflow-hidden relative">
@@ -77,6 +78,6 @@ export function MovieCard({ setTrailer, ...movie }: MovieCardProps) {
                     </Tooltip>
                 </ItemFooter>
             </Item>
-        </>
+        </Suspense>
     );
 }
