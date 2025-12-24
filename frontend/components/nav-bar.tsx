@@ -3,9 +3,11 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
+  InputGroupButton,
 } from "@/components/ui/input-group"
 import { ModeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import Link from "next/link";
 
 const navItems = [
@@ -39,6 +41,18 @@ export function NavBar({ username, setUsername, handleSubmit }){
                 value={username}                
                 onChange={(e) => setUsername(e.target.value)} 
                 autoComplete="off"/>
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  aria-label="Clear"
+                  title="Clear"
+                  size="icon-xs"
+                  variant="link"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={() => setUsername("")}
+                >
+                  <X />
+                </InputGroupButton>
+              </InputGroupAddon>
             </InputGroup>
           </form>
           </div>
