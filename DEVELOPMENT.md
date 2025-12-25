@@ -1,62 +1,39 @@
-## MacOS/Linux Backend Setup for Development (Optional)
+## Backend Development 
+
 ### Creating Datasets
 
-- Download the [(international) movies dataset](https://www.kaggle.com/datasets/pavan4kalyan/imdb-dataset-of-600k-international-movies) and move inner the `movie_dataset` to `data/movie_dataset`
-- Download the [trending movies dataset](https://www.kaggle.com/datasets/amitksingh2103/trending-movies-over-the-years) and move it to `data/trending_movies.csv`
-- Initialize the movies dataset and merged trending movies dataset: `uv run helpers/initialize_datasets.py`
-- Preprocess the movies dataset: `uv run helpers/preprocess_features.py`
-- Split the preprocessed movies dataset: `uv run helpers/split_csv.py`
-- Retrieve the preprocessed features of the trending movies dataset: `uv run helpers/retrieve_preprocessed.py`
-- **(Very slow ~ 6 hrs)** Scrape movie trailer YouTube video ids for the merged trending movies dataset: `uv run helpers/scrape_trailer_ids.py`
+- Download the following datasets from Kaggle, and move them to `data`:
+    - The inner `movie_dataset` of [(international) movies dataset](https://www.kaggle.com/datasets/pavan4kalyan/imdb-dataset-of-600k-international-movies)
+    - [Trending movies dataset](https://www.kaggle.com/datasets/amitksingh2103/trending-movies-over-the-years) 
+- `cd helpers`
+- Initialize the movies dataset and merged trending movies dataset: `uv run initialize_datasets.py`
+- Preprocess the movies dataset: `uv run preprocess_features.py`
+- Split the preprocessed movies dataset: `uv run split_csv.py`
+- Retrieve the preprocessed features of the trending movies dataset: `uv run retrieve_preprocessed.py`
+- **(Optional, Very slow ~ 6 hrs)** Scrape movie trailer YouTube video ids for the merged trending movies dataset: `uv run scrape_trailer_ids.py`
 
 ### Scraping, Sentiment Analysis, and Merging of Letterboxd Data
 
+- If not done already: `cd helpers`
 - Select a Letterboxd user's `username` to use 
 
-#### Scraping 
+#### Scraping Letterboxd
 
-- `uv run helpers/scrape_reviews.py username`
-- Find the scraped reviews at `data/reviews/username.csv`
+- Out of `reviews`, `ratings`, and `pfp`, pass the desired item names after `username` when running `scrape_letterboxd.py`
+- For example, `uv run scrape_letterboxd.py username pfp reviews ratings`:
+    - Scrapes reviews and saves them at `../data/reviews/username.csv` or `..\data\reviews\username.csv`
+    - Scraped ratings and saves them at `../data/ratings/username.csv` or `..\data\ratings\username.csv`
+    - Prints the url of the user's pfp
 
 #### Sentiment Analysis
 
-- `uv run helpers/sentiment.py username`
-- Find the scraped reviews and their sentiment analysis at `data/sentiment_reviews/username.csv`
+- To perform sentiment analysis on the scraped reviews from the previous step: `uv run sentiment.py username`
+- Find the results at `../data/sentiment_reviews/username.csv` or `..\data\sentiment_reviews\username.csv`
 
 #### Merging
 
-- `uv run helpers/movieswreviews.py username`
-- Find the reviews and their sentiment analysis at `data/merged_reviews/username.csv` 
-
-## Windows Backend Setup for Development (Optional)
-### Creating Datasets
-
-- Download the [(international) movies dataset](https://www.kaggle.com/datasets/pavan4kalyan/imdb-dataset-of-600k-international-movies) and move inner the `movie_dataset` to `data\movie_dataset`
-- Download the [trending movies dataset](https://www.kaggle.com/datasets/amitksingh2103/trending-movies-over-the-years) and move it to `data\trending_movies.csv`
-- Initialize the movies dataset and merged trending movies dataset: `uv run helpers\initialize_datasets.py`
-- Preprocess the movies dataset: `uv run helpers\preprocess_features.py`
-- Split the preprocessed movies dataset: `uv run helpers\split_csv.py`
-- Retrieve the preprocessed features of the trending movies dataset: `uv run helpers\retrieve_preprocessed.py`
-- **(Very slow ~ 6 hrs)** Scrape movie trailer YouTube video ids for the merged trending movies dataset: `uv run helpers\scrape_trailer_ids.py`
-
-### Scraping, Sentiment Analysis, and Merging of Letterboxd Data
-
-- Select a Letterboxd user's `username` to use 
-
-#### Scraping 
-
-- `uv run helpers\scrape_reviews.py username`
-- Find the scraped reviews at `data\reviews\username.csv`
-
-#### Sentiment Analysis
-
-- `uv run helpers\sentiment.py username`
-- Find the scraped reviews and their sentiment analysis at `data\sentiment_reviews\username.csv`
-
-#### Merging
-
-- `uv run helpers\movieswreviews.py username`
-- Find the reviews and their sentiment analysis at `data\merged_reviews\username.csv`
+- To merge movie data with the results of sentiment analysis from the previous step: `uv run movieswreviews.py username`
+- Find the results at `../data/merged_reviews/username.csv` or `..\data\merged_reviews\username.csv` 
 
 ## Frontend Development
 - When changing backend model types, to ensure changes are imported to the frontend, run `uv run main.py` in `backend` and run `npm run openapi-ts` in `frontend` to run HeyAPI.
