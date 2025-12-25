@@ -13,6 +13,7 @@ class Path(str, Enum):
     MERGED_TRENDING_MOVIES = os.path.join(DATA_FOLDER, "merged_trending_movies.csv")
     PREPROCESSED_TRENDING_MOVIES = os.path.join(DATA_FOLDER, "preprocessed_trending_movies.csv")
 
+    RATINGS_FOLDER = os.path.join(DATA_FOLDER, "ratings")
     REVIEWS_FOLDER = os.path.join(DATA_FOLDER, "reviews")
     SENTIMENT_REVIEWS_FOLDER = os.path.join(DATA_FOLDER, "sentiment_reviews")
     MERGED_REVIEWS_FOLDER = os.path.join(DATA_FOLDER, "merged_reviews")

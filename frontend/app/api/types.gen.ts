@@ -155,7 +155,7 @@ export type CheckStatusStatusGetResponses = {
 
 export type CheckStatusStatusGetResponse = CheckStatusStatusGetResponses[keyof CheckStatusStatusGetResponses];
 
-export type GetRecommendMoviesMoviesGetData = {
+export type GetRecommendationsMoviesGetData = {
     body?: never;
     path?: never;
     query: {
@@ -167,22 +167,54 @@ export type GetRecommendMoviesMoviesGetData = {
     url: '/movies/';
 };
 
-export type GetRecommendMoviesMoviesGetErrors = {
+export type GetRecommendationsMoviesGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetRecommendMoviesMoviesGetError = GetRecommendMoviesMoviesGetErrors[keyof GetRecommendMoviesMoviesGetErrors];
+export type GetRecommendationsMoviesGetError = GetRecommendationsMoviesGetErrors[keyof GetRecommendationsMoviesGetErrors];
 
-export type GetRecommendMoviesMoviesGetResponses = {
+export type GetRecommendationsMoviesGetResponses = {
     /**
-     * Response Get Recommend Movies Movies  Get
+     * Response Get Recommendations Movies  Get
      *
      * Successful Response
      */
     200: Array<Movie>;
 };
 
-export type GetRecommendMoviesMoviesGetResponse = GetRecommendMoviesMoviesGetResponses[keyof GetRecommendMoviesMoviesGetResponses];
+export type GetRecommendationsMoviesGetResponse = GetRecommendationsMoviesGetResponses[keyof GetRecommendationsMoviesGetResponses];
+
+export type GetPfpUrlPfpUrlsGetData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Username
+         */
+        username: string;
+    };
+    url: '/pfp-urls/';
+};
+
+export type GetPfpUrlPfpUrlsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetPfpUrlPfpUrlsGetError = GetPfpUrlPfpUrlsGetErrors[keyof GetPfpUrlPfpUrlsGetErrors];
+
+export type GetPfpUrlPfpUrlsGetResponses = {
+    /**
+     * Response Get Pfp Url Pfp Urls  Get
+     *
+     * Successful Response
+     */
+    200: string;
+};
+
+export type GetPfpUrlPfpUrlsGetResponse = GetPfpUrlPfpUrlsGetResponses[keyof GetPfpUrlPfpUrlsGetResponses];

@@ -10,7 +10,7 @@ from threading import Lock
 from sklearn.preprocessing import StandardScaler
 from helpers.paths import Path
 from helpers.models import UsernameRequest, Status, Movie
-from helpers.scrape_reviews import scrape_reviews 
+from helpers.scrape_letterboxd import scrape_reviews, scrape_pfp_url
 from helpers.sentiment import sentiment_analysis
 from helpers.recommender import recommend_movies
 from helpers.movieswreviews import merge_sentiment_reviews_dataset
@@ -150,6 +150,18 @@ def get_recommend_movies(username: str):
         )
     else:
         return recommendations[username]
+
+@app.get("/pfp-urls/", response_model=str)
+def get_pfp_url(username: str):
+    pfp_url = scrape_pfp_url(username)
+    if len(pfp_url) == 0:
+        raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail=f"Failed to get profile picture URL for Letterboxd user: {username}, \
+                        retry if Letterboxd username is valid"
+        )
+    else:
+        return pfp_url
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
