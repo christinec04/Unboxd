@@ -28,7 +28,13 @@ export default function RecommendationsPage() {
   const [backendError, setBackendError] = useState<BackendError>(BackendError.NONE);
   
   const onLoad = async () => {
-    if (!username) { return; }
+    console.log(username);
+    if (!username) { 
+      console.log("No username provided");
+      setStatus("Error");
+      setBackendError(BackendError.IMPOSSIBLE_REQUEST);
+      return; 
+    }
 
     try {
       await api.post('/usernames/', { username: username });

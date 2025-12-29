@@ -14,7 +14,7 @@ export function StatusIndicator({status, backendError}: {status: ExtendedStatus,
   const isUnexpectedError = backendError === BackendError.UNEXPECTED;
   const isUnclearError = backendError === BackendError.UNCLEAR_CAUSE_OF_FAILURE;
   const isImpossibleRequestError = backendError === BackendError.IMPOSSIBLE_REQUEST;
-  const isError = isUnexpectedError || isUnclearError || isImpossibleRequestError;
+  const isError = backendError !== BackendError.NONE;
 
   const refreshPage = () => {
     window.location.reload(); 
@@ -32,14 +32,12 @@ export function StatusIndicator({status, backendError}: {status: ExtendedStatus,
 
             <EmptyDescription>
               {isUnclearError && "If this is not the case, blame Letterboxd, and please try again" }
-            </EmptyDescription>
-
-            <EmptyDescription>
               {isUnexpectedError && "Something went wrong, please try again" }
+              {isImpossibleRequestError && "Please check you entered your username and try again" }
             </EmptyDescription>
           </EmptyHeader>
 
-          {(isUnclearError|| isUnexpectedError) && <EmptyContent>
+          {(isUnclearError || isUnexpectedError) && <EmptyContent>
               <Button variant="outline" size="sm" onClick={refreshPage}>
               <RefreshCcwIcon />
               Refresh

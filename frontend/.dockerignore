@@ -1,0 +1,17 @@
+.next/
+dist/
+build/
+.vite/
+
+node_modules/
+
+.DS_Store
+.vscode/
+.idea/
+
+.git
+.gitignore
+
+*.log
+.env
+.env.*

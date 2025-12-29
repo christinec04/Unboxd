@@ -15,7 +15,9 @@ const navItems = [
   { href: "https://github.iu.edu/B365-Fall2025/Project-ez2-ermili-cch8-dvchavan", label: "Docs", isExternal: true },
 ]
 
-export function NavBar({ username, setUsername, handleSubmit }){
+export function NavBar({ username, setUsername, handleSubmit } : { username: string | null; setUsername: (username: string) => void; handleSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<void> }) {
+  const user = username?.toString() || "";
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/55 backdrop-blur-md">
       <div className="container mx-auto p-4 sm:px-6 lg:px-8 flex justify-between gap-4">
@@ -38,7 +40,7 @@ export function NavBar({ username, setUsername, handleSubmit }){
                 id="username"
                 type="text"
                 placeholder="username"
-                value={username}                
+                value={user}                
                 onChange={(e) => setUsername(e.target.value)} 
                 autoComplete="off"/>
               <InputGroupAddon align="inline-end">
