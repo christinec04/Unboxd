@@ -1,12 +1,13 @@
 from selenium import webdriver 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.chrome.options import Options
 import sys
 import pandas as pd
 import os
 from itertools import count
 
-def click_element(driver: webdriver.Chrome, element: WebElement) -> None:
+def click_element(driver: webdriver.Remote, element: WebElement) -> None:
     """Clicks `element`, regardless of whether is is obscured on the page, using `driver`"""
     driver.execute_script("arguments[0].click();", element)
 
@@ -14,7 +15,7 @@ def get_reviews_url(username: str, page_number: int) -> str:
     """Returns the url of the reviews on `page_number` of `username`'s reviews on Letterboxd"""
     return f"https://letterboxd.com/{username}/reviews/films/page/{page_number}/"
 
-def reveal_hidden_reviews_content(driver: webdriver.Chrome, review: WebElement) -> None:
+def reveal_hidden_reviews_content(driver: webdriver.Remote, review: WebElement) -> None:
     """Reveals truncated content or content hidden by spoiler warnings on a Letterboxd reviews page"""
     try:
         reveal_spoiler_button = review.find_element(By.CSS_SELECTOR, "[data-js-trigger=\"spoiler.reveal\"]")
@@ -27,11 +28,15 @@ def reveal_hidden_reviews_content(driver: webdriver.Chrome, review: WebElement) 
     except:
         pass
 
-def init_headless_chrome_webdriver() -> webdriver.Chrome:
+def init_headless_chrome_webdriver() -> webdriver.Remote:
     """Returns a Chrome webdriver that operates without a GUI"""
-    options = webdriver.ChromeOptions()
+    options = Options()
     options.add_argument("--headless")
-    driver = webdriver.Chrome(options)
+
+    driver = webdriver.Remote(
+        command_executor=os.getenv("SELENIUM_URL"),
+        options=options
+    )
     return driver
 
 def scrape_reviews(username: str, print_status: bool = False) -> pd.DataFrame:

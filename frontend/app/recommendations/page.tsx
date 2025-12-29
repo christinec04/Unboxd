@@ -16,7 +16,7 @@ export enum BackendError {
   IMPOSSIBLE_REQUEST = "Impossible request",
 }
 
-export type ExtendedStatus = Status | "Error";
+export type ExtendedStatus = Status | "Error" | "404 Not Found";
 
 export default function RecommendationsPage() {
   const searchParams = useSearchParams();
@@ -74,7 +74,7 @@ export default function RecommendationsPage() {
   useEffect(() => {
     if (!username) { 
       console.log("No username provided");
-      setStatus("Error");
+      setStatus("404 Not Found");
       setBackendError(BackendError.IMPOSSIBLE_REQUEST);
       return; 
     }

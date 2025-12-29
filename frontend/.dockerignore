@@ -13,5 +13,3 @@ node_modules/
 .gitignore
 
 *.log
-.env
-.env.*

@@ -33,7 +33,6 @@ export function StatusIndicator({status, backendError}: {status: ExtendedStatus,
             <EmptyDescription>
               {isUnclearError && "If this is not the case, blame Letterboxd, and please try again" }
               {isUnexpectedError && "Something went wrong, please try again" }
-              {isImpossibleRequestError && "Please check you entered your username and try again" }
             </EmptyDescription>
           </EmptyHeader>
 
