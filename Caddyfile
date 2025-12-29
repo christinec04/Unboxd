@@ -1,0 +1,7 @@
+unboxd.page {
+    reverse_proxy frontend:3000
+}
+
+api.unboxd.page {
+    reverse_proxy backend:8000
+}
