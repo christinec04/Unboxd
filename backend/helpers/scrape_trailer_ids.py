@@ -1,82 +1,82 @@
-from selenium.webdriver.common.by import By
-import pandas as pd
 import time
 import requests
 import json
 from tqdm import tqdm
-from scrape_reviews import init_headless_chrome_webdriver
-from paths import Path
+from typing import Protocol
+from abc import abstractmethod
+import pandas as pd
 
-def get_trailer_search_url(movie_name: str, release_year: str):
+def get_trailer_search_url(movie_name: str, release_year: str) -> str:
     """Returns the url for searching for `movie_name`'s trailer on YouTube"""
-    search_query = "+".join(movie_name.split() + [release_year, "trailer"])
+    search_query = "+".join(movie_name.split() + ["(", release_year, ")", "trailer"])
     return f"https://www.youtube.com/results?search_query={search_query}"
 
-def scrape_trailer_ids_with_driver(movie_names: list[str], release_years) -> list[str]:
-    """Returns the scraped YouTube video ids for the trailers of the movies specified by `movie_names` and `release_years` with a Chrome webdriver"""
-    print("starting scraping...")
-    driver = init_headless_chrome_webdriver()
-    trailer_ids = []
-    for movie_name, release_year in zip(tqdm(movie_names), release_years):
-        video_id = ""
-        try:
-            driver.get(get_trailer_search_url(movie_name, release_year))
-            time.sleep(1)
-            video_titles = driver.find_elements(By.ID, "video-title")
-            channel_names = [e.text for e in driver.find_elements(By.ID, "channel-info")]
-            for video_title, channel_name in zip(video_titles, channel_names):
-                # skip content from YouTube Movies & TV bc they only show trailers for non-rated R content w/out signing in 
-                if channel_name == "Youtube Movies & TV":
-                    continue
-                video_url = video_title.get_attribute("href")
-                if video_url is None:
-                    continue
-                url_prefix = "https://www.youtube.com/watch?v="
-                video_id_end = video_url.find("&")
-                video_id = video_url[len(url_prefix):video_id_end]
-                break
-        except Exception as e:
-            tqdm.write(f"error, failed to scrape for {movie_name}: {e}")
-        trailer_ids.append(video_id)
-    driver.quit()
-    return trailer_ids
+class YouTubeTrailerScraper(Protocol):
+    @abstractmethod
+    def get_trailer_id(self, html: str) -> str:
+        ...
 
-def scrape_trailer_ids(movie_names: list[str], release_years: list[str]) -> list[str]:
-    """Returns the scraped YouTube video ids for the trailers of the movies specified by `movie_names` and `release_years`"""
-    print("starting scraping...")
-    decoder = json.JSONDecoder()
+class MetadetaParsingScraper:
+    def __init__(self): 
+        self.decoder = json.JSONDecoder()
+    def get_trailer_id(self, html: str) -> str:
+        video_id = ""
+        info_prefix = "var ytInitialData = "
+        info_start = html.find(info_prefix) + len(info_prefix)
+        info_end = html.find(";</script>", info_start)
+        info = self.decoder.decode(html[info_start:info_end])
+        contents = info["contents"]["twoColumnSearchResultsRenderer"]["primaryContents"] \
+                ["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
+        for content in contents:
+            # skip content from YouTube Movies & TV bc they only show trailers for non-rated R content w/out signing in 
+            if "videoRenderer" not in content:
+                continue
+            video_id = content["videoRenderer"]["videoId"]
+            break
+        return video_id
+
+class MetadetaSubstringScraper:
+    def get_trailer_id(self, html: str) -> str:
+        # skip content from YouTube Movies & TV bc they only show trailers for non-rated R content w/out signing in 
+        id_prefix = "\"videoRenderer\":{\"videoId\":\""
+        id_start = html.find(id_prefix) + len(id_prefix)
+        id_end = html.find("\"", id_start)
+        video_id = html[id_start:id_end]
+        return video_id
+
+def scrape_trailer_ids(
+        scraper: YouTubeTrailerScraper, movie_names: list[str], 
+        release_years: list[str], print_status: bool = False
+        ) -> list[str]:
+    """Returns the scraped YouTube video ids of the trailers of the movies specified by `movie_names` and `release_years`"""
+    if print_status: print("starting scraping...")
     trailer_ids = []
-    for movie_name, release_year in zip(tqdm(movie_names), release_years):
+    movie_data = zip(tqdm(movie_names), release_years) if print_status else zip(movie_names, release_years)
+    for movie_name, release_year in movie_data:
+        if print_status: tqdm.write(f"scraping for {movie_name}...")
         video_id = ""
         try:
             response = requests.get(get_trailer_search_url(movie_name, release_year))
-            time.sleep(1)
+            response.raise_for_status()
             html = response.text
-            info_prefix = "var ytInitialData = "
-            info_start = html.find(info_prefix) + len(info_prefix)
-            info_end = html.find(";", info_start)
-            info = decoder.decode(html[info_start:info_end])
-            contents = info["contents"]["twoColumnSearchResultsRenderer"]["primaryContents"] \
-                    ["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
-            for content in reversed(contents):
-                # skip content from YouTube Movies & TV bc they only show trailers for non-rated R content w/out signing in 
-                if "videoRenderer" not in content:
-                    continue
-                video_id = content["videoRenderer"]["videoId"]
+            video_id = scraper.get_trailer_id(html)
         except Exception as e:
-            tqdm.write(f"error, failed to scrape for {movie_name}: {e}")
+            if print_status: tqdm.write(f"error, failed to scrape for {movie_name}: {e}")
         trailer_ids.append(video_id)
+        time.sleep(2)
     return trailer_ids
 
-merged_trending_movies = pd.read_csv(Path.MERGED_TRENDING_MOVIES)
-strings = lambda xs: [str(x) if x else "" for x in xs]
-release_years = strings(merged_trending_movies["release_year"].values)
-movie_names = strings(merged_trending_movies["original_title"].values)
-# slower but less error prone than the other scraping method
-trailer_ids = scrape_trailer_ids_with_driver(movie_names, release_years) 
-# trailer_ids = scrape_trailer_ids(movie_names, release_years) 
-result = pd.DataFrame()
-result["imdb_id"] = merged_trending_movies["imdb_id"]
-result["trailer_id"] = trailer_ids
-result.to_csv(Path.TRENDING_MOVIE_TRAILERS)
+if __name__ == "__main__":
+    from paths import Path
+    merged_trending_movies = pd.read_csv(Path.MERGED_TRENDING_MOVIES)
+    strings = lambda xs: [str(x) if x else "" for x in xs]
+    movie_names = strings(merged_trending_movies["original_title"].values)
+    release_years = strings(merged_trending_movies["release_year"].values)
+    ## scraper = MetadetaParsingScraper()
+    scraper = MetadetaSubstringScraper()
+    trailer_ids = scrape_trailer_ids(scraper, movie_names, release_years, print_status=True) 
+    result = pd.DataFrame()
+    result["imdb_id"] = merged_trending_movies["imdb_id"].to_list()
+    result["trailer_id"] = trailer_ids
+    result.to_csv(Path.TRENDING_MOVIE_TRAILERS)
 

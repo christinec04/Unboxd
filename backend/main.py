@@ -7,13 +7,11 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
 from threading import Lock
-from sklearn.preprocessing import StandardScaler
 from helpers.paths import Path
 from helpers.models import UsernameRequest, Status, Movie
-from helpers.scrape_letterboxd import scrape_reviews, scrape_pfp_url
-from helpers.sentiment import sentiment_analysis
+from helpers.scrape_letterboxd import scrape_ratings, scrape_pfp_url
 from helpers.recommender import recommend_movies
-from helpers.movieswreviews import merge_sentiment_reviews_dataset
+from helpers.merge_ratings import obtain_ids_and_weights
 from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
 
 scraper_lock = Lock()
@@ -29,7 +27,7 @@ preprocessed_trending_movies = np.delete(arr=indexed_preprocessed_trending_movie
 preprocessed_trending_movies_ids = complete_preprocessed_trending_movies["imdb_id"].to_list()
 
 trailers = pd.read_csv(Path.TRENDING_MOVIE_TRAILERS)
-trailer_ids = {trailer.imdb_id:trailer.trailer_id for trailer in trailers.itertuples()}
+trailer_ids = set(trailers["imdb_id"].values)
 
 app = FastAPI()
 origins = [
@@ -60,7 +58,7 @@ def get_movies(recs: dict[str, float]) -> list[Movie]:
             description=movie.plot,
             posterURL=movie.poster_url,
             letterboxdURL=f'https://www.letterboxd.com/imdb/{movie.imdb_id}',
-            trailerID=trailer_ids[movie.imdb_id] if movie.imdb_id in trailer_ids else "",
+            trailerID=movie.imdb_id if movie.imdb_id in trailer_ids else "",
             similarityScore=recs[movie.imdb_id]
         ))
     return result 
@@ -79,26 +77,21 @@ def recommendation_system(username: str):
 
     status[username] = Status.WAITING_FOR_SCRAPER
     with scraper_lock:
-        status[username] = Status.SCRAPING_REVIEWS
+        status[username] = Status.SCRAPING_RATINGS
         try:
-            reviews = scrape_reviews(username)
+            ratings = scrape_ratings(username)
         except:
             status[username] = Status.FAILED_SCRAPING
             return
-    if len(reviews) == 0:
-        status[username] = Status.FAILED_NO_REVIEWS
-        return
-    status[username] = Status.PREPROCESSING_DATA
-    sentiment_reviews = sentiment_analysis(reviews)
-    merged_reviews = merge_sentiment_reviews_dataset(movies, sentiment_reviews)
-    if len(merged_reviews) == 0:
-        status[username] = Status.FAILED_NO_DATA
+    if len(ratings) == 0:
+        status[username] = Status.FAILED_NO_RATINGS
         return
 
-    scaled_user_ratings = StandardScaler().fit_transform(merged_reviews["user_rating"].to_numpy().reshape(-1, 1))
-    sentiment_scores = merged_reviews["compound"].to_list()
-    weights = [a + b for a, b in zip(sentiment_scores, scaled_user_ratings)]
-    user_movie_ids = set(merged_reviews["imdb_id"].to_list())
+    status[username] = Status.PREPROCESSING_DATA
+    user_movie_ids, weights = obtain_ids_and_weights(movies, ratings)
+    if len(user_movie_ids) == 0:
+        status[username] = Status.FAILED_NO_DATA
+        return
     complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
     preprocessed_user_movies = complete_preprocessed_user_movies.drop(columns=["imdb_id"]).to_numpy()
 
@@ -133,7 +126,7 @@ def check_status(username: str):
                         post /usernames/ to start it."
         )
     username_status = status[username]
-    if username_status in (Status.FAILED_INVALID_USERNAME, Status.FAILED_NO_REVIEWS):
+    if username_status in (Status.FAILED_INVALID_USERNAME, Status.FAILED_NO_RATINGS):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=username_status)
     elif username_status in (Status.FAILED_SCRAPING, Status.FAILED_NO_DATA, Status.FAILED_NO_RECOMMENDATIONS):
         raise HTTPException(status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=username_status)
