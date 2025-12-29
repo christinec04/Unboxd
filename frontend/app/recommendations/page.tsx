@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import api from "@/app/api";
 import { NavBar } from "@/components/nav-bar";
-import { useRouter } from "next/navigation";
 import { Result } from "@/components/result";
 import { StatusIndicator } from "@/components/status-indicator";
 import { Status } from "@/app/api/types.gen";
@@ -21,31 +20,10 @@ export type ExtendedStatus = Status | "Error";
 
 export default function RecommendationsPage() {
   const searchParams = useSearchParams();
-  const [username, setUsername] = useState(searchParams.get("username"));
+  const username  = searchParams.get("username");
   const [movies, setMovies] = useState([]);
-  const router = useRouter();
   const [status, setStatus] = useState<ExtendedStatus>(Status.STARTING);
   const [backendError, setBackendError] = useState<BackendError>(BackendError.NONE);
-  
-  const onLoad = async () => {
-    console.log(username);
-    if (!username) { 
-      console.log("No username provided");
-      setStatus("Error");
-      setBackendError(BackendError.IMPOSSIBLE_REQUEST);
-      return; 
-    }
-
-    try {
-      await api.post('/usernames/', { username: username });
-      const intervalId = setInterval(() => getStatus(intervalId), 5000);
-    } 
-    catch (error) {
-      console.log(error);
-      setStatus("Error");
-      setBackendError(BackendError.UNEXPECTED);
-    }
-  };
 
   const getStatus = async (intervalId: NodeJS.Timeout) => {
     try {
@@ -92,20 +70,48 @@ export default function RecommendationsPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-     router.push(`/recommendations?username=${username}`);
-  };
-
   // On page load
   useEffect(() => {
-    onLoad();
-  }, [username]);
+    if (!username) { 
+      console.log("No username provided");
+      setStatus("Error");
+      setBackendError(BackendError.IMPOSSIBLE_REQUEST);
+      return; 
+    }
 
+    // Reset UI immediately when username changes
+    setMovies([]);
+    setStatus(Status.STARTING);
+    setBackendError(BackendError.NONE);
+
+    let intervalId: NodeJS.Timeout | null = null;
+
+    async function start() {
+      try {
+        await api.post('/usernames/', { username: username });
+        intervalId = setInterval(() => {
+          getStatus(intervalId!);
+        }, 5000);
+      } 
+      catch (error) {
+        console.log(error);
+        setStatus("Error");
+        setBackendError(BackendError.UNEXPECTED);
+      }
+    }
+
+    start();
+
+    // CLEANUP: stop old interval when username changes
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen w-full bg-background flex flex-col">
-      <NavBar username={username} setUsername={setUsername} handleSubmit={handleSubmit} />
+      <NavBar username={username} />
 
       {status === Status.FINISHED && <Result movies={movies} />}
       {status !== Status.FINISHED && <StatusIndicator status={status} backendError={backendError} />}
