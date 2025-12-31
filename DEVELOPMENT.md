@@ -12,28 +12,22 @@
 - Retrieve the preprocessed features of the trending movies dataset: `uv run retrieve_preprocessed.py`
 - **(Optional, Very slow ~ 6 hrs)** Scrape movie trailer YouTube video ids for the merged trending movies dataset: `uv run scrape_trailer_ids.py`
 
-### Scraping, Sentiment Analysis, and Merging of Letterboxd Data
+### Scraping and Merging of Letterboxd Data
 
 - If not done already: `cd helpers`
 - Select a Letterboxd user's `username` to use 
 
 #### Scraping Letterboxd
 
-- Out of `reviews`, `ratings`, and `pfp`, pass the desired item names after `username` when running `scrape_letterboxd.py`
-- For example, `uv run scrape_letterboxd.py username pfp reviews ratings`:
-    - Scrapes reviews and saves them at `../data/reviews/username.csv` or `..\data\reviews\username.csv`
-    - Scraped ratings and saves them at `../data/ratings/username.csv` or `..\data\ratings\username.csv`
+- Out of `ratings`, and `pfp`, pass the desired item names after `username` when running `scrape_letterboxd.py`
+- For example, `uv run scrape_letterboxd.py username pfp ratings`:
+    - Scrapes ratings and saves them at `../data/ratings/username.csv` or `..\data\ratings\username.csv`
     - Prints the url of the user's pfp
-
-#### Sentiment Analysis
-
-- To perform sentiment analysis on the scraped reviews from the previous step: `uv run sentiment.py username`
-- Find the results at `../data/sentiment_reviews/username.csv` or `..\data\sentiment_reviews\username.csv`
 
 #### Merging
 
-- To merge movie data with the results of sentiment analysis from the previous step: `uv run movieswreviews.py username`
-- Find the results at `../data/merged_reviews/username.csv` or `..\data\merged_reviews\username.csv` 
+- To merge movie data with the scraped ratings from the previous step: `uv run merge_ratings.py username`
+- Find the results at `../data/merged_ratings/username.csv` or `..\data\merged_ratings\username.csv` 
 
 ## Frontend Development
 - When changing backend model types, to ensure changes are imported to the frontend, run `uv run main.py` in `backend` and run `npm run openapi-ts` in `frontend` to run HeyAPI.
@@ -48,15 +42,15 @@
     - `merged_trending_movies.csv` trending movies with features from the movies dataset
     - `preprocessed_trending_movies.csv` trending movies with features from the preprocessed movies dataset
     - `trending_movie_trailers.csv` movie trailer YouTube video ids of the merged trending movies dataset
-    - `reviews` scraped Letterboxd data 
+    - `ratings` scraped Letterboxd user ratings
+    - `merged_ratings` scraped Letterboxd user ratings combined with movie data from the movies dataset
   - `helpers` helper methods
     - `models.py` type modelling
     - `paths.py` enumerates the paths of the contents of `data`
     - `initialize_datasets.py` initializes the movies dataset and the merged trending movies dataset
-    - `scrape_reviews.py` provides method for scraping Letterboxd user data 
+    - `scrape_letterboxd.py` provides method for scraping Letterboxd user data 
     - `scrape_trailer_ids.py` scrapes YouTube for merged trending movie trailer ids
-    - `sentiment.py` provides method for sentiment analysis on scraped Letterboxd user data 
-    - `movieswreviews.py` provides method for merging the movies dataset with post sentiment analysis Letterboxd user data
+    - `merge_ratings.py` provides methods for merging the movies dataset with scraped Letterboxd user ratings 
     - `recommender.py` provides cosine similarity and knn recommender methods
     - `preprocess_features.py` preprocesses the movies dataset
     - `split_csv.py` splits the preprocessed movies dataset into multiple files

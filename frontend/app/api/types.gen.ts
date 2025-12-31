@@ -64,13 +64,13 @@ export enum Status {
     VALIDATING_USERNAME = 'Validating username',
     FAILED_INVALID_USERNAME = 'Failed. Invalid username',
     WAITING_FOR_SCRAPER = 'Waiting for scraper',
-    SCRAPING_THE_USER_REVIEWS = 'Scraping the user reviews',
-    FAILED_NO_REVIEWS_TO_SCRAPE_FOR_THE_USER = 'Failed. No reviews to scrape for the user',
+    SCRAPING_USER_RATINGS = 'Scraping user ratings',
+    FAILED_NO_RATINGS_TO_SCRAPE_FOR_THE_USER = 'Failed. No ratings to scrape for the user',
     FAILED_ERROR_WHILE_SCRAPING = 'Failed. Error while scraping',
     PREPROCESSING_DATA = 'Preprocessing data',
-    FAILED_NO_DATA_AVAILABLE_ABOUT_THE_USER_REVIEWED_MOVIES = 'Failed. No data available about the user-reviewed movies',
+    FAILED_NO_DATA_AVAILABLE_ABOUT_THE_USER_RATED_MOVIES = 'Failed. No data available about the user-rated movies',
     FINDING_RECOMMENDATIONS = 'Finding recommendations',
-    FAILED_NO_TRENDING_MOVIES_NOT_ALREADY_REVIEWED_ARE_AVAILABLE_FOR_RECOMMENDATION = 'Failed. No trending movies not already reviewed are available for recommendation',
+    FAILED_NO_MOVIES_NOT_ALREADY_RATED_ARE_AVAILABLE_FOR_RECOMMENDATION = 'Failed. No movies not already rated are available for recommendation',
     FINISHED = 'Finished'
 }
 
@@ -155,7 +155,7 @@ export type CheckStatusStatusGetResponses = {
 
 export type CheckStatusStatusGetResponse = CheckStatusStatusGetResponses[keyof CheckStatusStatusGetResponses];
 
-export type GetRecommendationsMoviesGetData = {
+export type GetRecommendMoviesMoviesGetData = {
     body?: never;
     path?: never;
     query: {
@@ -167,25 +167,25 @@ export type GetRecommendationsMoviesGetData = {
     url: '/movies/';
 };
 
-export type GetRecommendationsMoviesGetErrors = {
+export type GetRecommendMoviesMoviesGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetRecommendationsMoviesGetError = GetRecommendationsMoviesGetErrors[keyof GetRecommendationsMoviesGetErrors];
+export type GetRecommendMoviesMoviesGetError = GetRecommendMoviesMoviesGetErrors[keyof GetRecommendMoviesMoviesGetErrors];
 
-export type GetRecommendationsMoviesGetResponses = {
+export type GetRecommendMoviesMoviesGetResponses = {
     /**
-     * Response Get Recommendations Movies  Get
+     * Response Get Recommend Movies Movies  Get
      *
      * Successful Response
      */
     200: Array<Movie>;
 };
 
-export type GetRecommendationsMoviesGetResponse = GetRecommendationsMoviesGetResponses[keyof GetRecommendationsMoviesGetResponses];
+export type GetRecommendMoviesMoviesGetResponse = GetRecommendMoviesMoviesGetResponses[keyof GetRecommendMoviesMoviesGetResponses];
 
 export type GetPfpUrlPfpUrlsGetData = {
     body?: never;
