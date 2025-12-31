@@ -2,8 +2,7 @@
 A recommendation system for Letterboxd movies.\
 You can download the recommended movies list and import it to your Letterboxd watchlist. See [here](https://letterboxd.com/about/importing-data/) for the Letterboxd guide on importing data.
 
-
-To see screenshots of the prototype and how the classification system works, read `paper.pdf`
+[Protoype demo](https://www.linkedin.com/posts/christinechen04_just-wanted-to-share-what-dhruv-chavan-eric-activity-7409682403075522560-uDkS)
 
 ## Setup
 \! For further development setup see `DEVELOPMENT.md`
