@@ -124,13 +124,6 @@ def recommendation_system(username: str):
     # recommendations[username] = dummy_data
     # status[username] = Status.FINISHED
     
-@app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
-def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
-    # Recommendation system has not started or has failed previously - start/restart it
-    if request.username not in status or status[request.username] in failed:
-        status[request.username] = Status.STARTING
-        background_tasks.add_task(recommendation_system, request.username)
-    return
 
 @app.get("/status/", response_model=Status)
 def check_status(username: str):

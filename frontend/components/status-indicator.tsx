@@ -13,7 +13,6 @@ import { BackendError, ExtendedStatus } from "@/hooks/recommendations";
 export function StatusIndicator({status, backendError}: {status: ExtendedStatus, backendError: BackendError}) {
   const isUnexpectedError = backendError === BackendError.UNEXPECTED;
   const isUnclearError = backendError === BackendError.UNCLEAR_CAUSE_OF_FAILURE;
-  const isImpossibleRequestError = backendError === BackendError.IMPOSSIBLE_REQUEST;
   const isError = backendError !== BackendError.NONE;
 
   const refreshPage = () => {
@@ -36,12 +35,13 @@ export function StatusIndicator({status, backendError}: {status: ExtendedStatus,
             </EmptyDescription>
           </EmptyHeader>
 
-          {(isUnclearError || isUnexpectedError) && <EmptyContent>
-              <Button variant="outline" size="sm" onClick={refreshPage}>
-              <RefreshCcwIcon />
-              Refresh
-            </Button>
-          </EmptyContent>}
+          {isError && 
+            <EmptyContent>
+                <Button variant="outline" size="sm" onClick={refreshPage}>
+                <RefreshCcwIcon />
+                Retry
+              </Button>
+            </EmptyContent>}
         </Empty>
       </div>
     </section>
