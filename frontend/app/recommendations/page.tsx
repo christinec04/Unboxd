@@ -11,13 +11,13 @@ export default function RecommendationsPage() {
   const searchParams = useSearchParams();
   const username  = searchParams.get("username");
 
-  const { movies, status, backendError } = useRecommendations(username);
+  const { movies, status, backendError, avatarURL } = useRecommendations(username);
 
   return (
     <div className="min-h-screen w-full bg-background flex flex-col">
       <NavBar username={username} />
 
-      {status === Status.FINISHED && <Result movies={movies} />}
+      {status === Status.FINISHED && username && <Result movies={movies} username={username} />}
       {status !== Status.FINISHED && <StatusIndicator status={status} backendError={backendError} />}
     
     </div>

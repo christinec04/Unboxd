@@ -92,7 +92,7 @@ function useRecommendations(username: string | null) {
                 await api.post('/usernames/', { username: username });
                 intervalId = setInterval(() => {
                     getStatus(intervalId!);
-                }, 5000);
+                }, 1000);
             }
             catch (error) {
                 console.log(error);
