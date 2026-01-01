@@ -11,7 +11,7 @@ export default function RecommendationsPage() {
   const searchParams = useSearchParams();
   const username  = searchParams.get("username");
 
-  const { movies, status, backendError, avatarURL } = useRecommendations(username);
+  const { movies, status, backendError } = useRecommendations(username);
 
   return (
     <div className="min-h-screen w-full bg-background flex flex-col">
