@@ -82,7 +82,7 @@ export function Result({ movies, username }: ResultProps & { username: string })
               data={movies}
               headers={headers}
               filename={"letterboxd_import.csv"}>
-              <Button variant="secondary"><Download /> DOWNLOAD RECOMMENDATIONS</Button>
+              <Button variant="outline"><Download /> DOWNLOAD RECOMMENDATIONS</Button>
             </CSVLink>
 
             {/* Like buttons */}
