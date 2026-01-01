@@ -13,6 +13,7 @@ from helpers.scrape_letterboxd import scrape_ratings, scrape_pfp_url
 from helpers.recommender import recommend_movies
 from helpers.merge_ratings import obtain_ids_and_weights
 from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
+from helpers.test import dummy_data
 
 scraper_lock = Lock()
 status: dict[str, Status] = dict()
@@ -69,47 +70,50 @@ def recommendation_system(username: str):
     updating the `status` of the system for `username` along the way, and storing the
     the result in `recommendations` for `username`
     """
-    status[username] = Status.VALIDATING_USERNAME
-    profile_response = requests.get(f"https://www.letterboxd.com/{username}/")
-    if profile_response.status_code != 200:
-        status[username] = Status.FAILED_INVALID_USERNAME
-        return
+    # status[username] = Status.VALIDATING_USERNAME
+    # profile_response = requests.get(f"https://www.letterboxd.com/{username}/")
+    # if profile_response.status_code != 200:
+    #     status[username] = Status.FAILED_INVALID_USERNAME
+    #     return
 
-    status[username] = Status.WAITING_FOR_SCRAPER
-    with scraper_lock:
-        status[username] = Status.SCRAPING_RATINGS
-        try:
-            ratings = scrape_ratings(username)
-        except:
-            status[username] = Status.FAILED_SCRAPING
-            return
-    if len(ratings) == 0:
-        status[username] = Status.FAILED_NO_RATINGS
-        return
+    # status[username] = Status.WAITING_FOR_SCRAPER
+    # with scraper_lock:
+    #     status[username] = Status.SCRAPING_RATINGS
+    #     try:
+    #         ratings = scrape_ratings(username)
+    #     except:
+    #         status[username] = Status.FAILED_SCRAPING
+    #         return
+    # if len(ratings) == 0:
+    #     status[username] = Status.FAILED_NO_RATINGS
+    #     return
 
-    status[username] = Status.PREPROCESSING_DATA
-    user_movie_ids, weights = obtain_ids_and_weights(movies, ratings)
-    if len(user_movie_ids) == 0:
-        status[username] = Status.FAILED_NO_DATA
-        return
-    complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
-    preprocessed_user_movies = complete_preprocessed_user_movies.drop(columns=["imdb_id"]).to_numpy()
+    # status[username] = Status.PREPROCESSING_DATA
+    # user_movie_ids, weights = obtain_ids_and_weights(movies, ratings)
+    # if len(user_movie_ids) == 0:
+    #     status[username] = Status.FAILED_NO_DATA
+    #     return
+    # complete_preprocessed_user_movies = retrieve_preprocessed_data(user_movie_ids.copy())
+    # preprocessed_user_movies = complete_preprocessed_user_movies.drop(columns=["imdb_id"]).to_numpy()
 
-    status[username] = Status.FINDING_RECOMMENDATION
-    recs = recommend_movies(
-        user_movies=preprocessed_user_movies,
-        weights=weights,
-        user_movie_ids=user_movie_ids,
-        all_movies=preprocessed_trending_movies,
-        all_movie_ids=preprocessed_trending_movies_ids,
-        k=10
-    )
-    if len(recs) == 0:
-        status[username] = Status.FAILED_NO_RECOMMENDATIONS 
-        return
-    recommendations[username] = get_movies(recs)
+    # status[username] = Status.FINDING_RECOMMENDATION
+    # recs = recommend_movies(
+    #     user_movies=preprocessed_user_movies,
+    #     weights=weights,
+    #     user_movie_ids=user_movie_ids,
+    #     all_movies=preprocessed_trending_movies,
+    #     all_movie_ids=preprocessed_trending_movies_ids,
+    #     k=10
+    # )
+    # if len(recs) == 0:
+    #     status[username] = Status.FAILED_NO_RECOMMENDATIONS 
+    #     return
+    # recommendations[username] = get_movies(recs)
 
+    # status[username] = Status.FINISHED
+    recommendations[username] = dummy_data
     status[username] = Status.FINISHED
+    
 
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):

@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { RefreshCcwIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import { BackendError, ExtendedStatus } from "@/app/recommendations/page";
+import { BackendError, ExtendedStatus } from "@/hooks/recommendations";
 
 export function StatusIndicator({status, backendError}: {status: ExtendedStatus, backendError: BackendError}) {
   const isUnexpectedError = backendError === BackendError.UNEXPECTED;

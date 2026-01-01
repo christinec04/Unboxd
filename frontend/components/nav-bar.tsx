@@ -12,14 +12,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "https://github.iu.edu/B365-Fall2025/Project-ez2-ermili-cch8-dvchavan", label: "Docs", isExternal: true },
+  { href: "/", 
+    label: "Home" },
+
+  { href: "https://github.iu.edu/B365-Fall2025/Project-ez2-ermili-cch8-dvchavan", 
+    label: "Docs", 
+    isExternal: true },
 ]
 
 export function NavBar({ username } : { username: string | null }) {
   const [user, setUser] = useState(username?.toString() || "");
-
   const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
      router.push(`/recommendations?username=${user}`);
