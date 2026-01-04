@@ -13,6 +13,7 @@ from helpers.scrape_letterboxd import scrape_ratings, scrape_pfp_url
 from helpers.recommender import recommend_movies
 from helpers.merge_ratings import obtain_ids_and_weights
 from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
+from helpers.test import dummy_data
 
 scraper_lock = Lock()
 status: dict[str, Status] = dict()
@@ -28,6 +29,14 @@ preprocessed_trending_movies_ids = complete_preprocessed_trending_movies["imdb_i
 
 trailers = pd.read_csv(Path.TRENDING_MOVIE_TRAILERS)
 trailer_ids = set(trailers["imdb_id"].values)
+
+failed = [
+    Status.FAILED_INVALID_USERNAME,
+    Status.FAILED_NO_RATINGS,
+    Status.FAILED_SCRAPING,
+    Status.FAILED_NO_DATA,
+    Status.FAILED_NO_RECOMMENDATIONS
+]
 
 app = FastAPI()
 origins = [
@@ -110,11 +119,17 @@ def recommendation_system(username: str):
     recommendations[username] = get_movies(recs)
 
     status[username] = Status.FINISHED
-
+    
+    # For testing purposes only - comment out above and uncomment below to use dummy data
+    # recommendations[username] = dummy_data
+    # status[username] = Status.FINISHED
+    
 @app.post("/usernames/", status_code=HTTPStatus.ACCEPTED)
 def init_system(request: UsernameRequest, background_tasks: BackgroundTasks):
-    status[request.username] = Status.STARTING
-    background_tasks.add_task(recommendation_system, request.username)
+    # Recommendation system has not started or has failed previously - start/restart it
+    if request.username not in status or status[request.username] in failed:
+        status[request.username] = Status.STARTING
+        background_tasks.add_task(recommendation_system, request.username)
     return
 
 @app.get("/status/", response_model=Status)

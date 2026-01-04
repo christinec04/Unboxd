@@ -55,7 +55,7 @@ def scrape_ratings(username: str, print_status: bool = False) -> pd.DataFrame:
             break
         last_page_number = int(page_numbers.pop().get_text())
         if page_number == last_page_number:
-            break;
+            break
     if print_status: print("finished scraping")
     return pd.DataFrame.from_dict(data)
 
@@ -72,7 +72,7 @@ def scrape_pfp_url(username: str) -> str:
     try:
         pfp_grandparent = soup.find(name="div", class_="profile-avatar")
         pfp_element = pfp_grandparent.find(name="img")
-        return pfp_element.get("src");
+        return pfp_element.get("src")
     except AttributeError:
         return ""
     except Exception:
