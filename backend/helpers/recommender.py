@@ -14,7 +14,7 @@ def cosine_similarity(movie1: np.ndarray, movie2: np.ndarray) -> float:
     similarity = sklearn_cosine_similarity(movie1.reshape(1, -1), movie2.reshape(1, -1))    
     return similarity[0][0]
 
-def find_representative_movie(movies: np.ndarray, weights: list[float]) -> int:
+def find_representative_movie(movies: np.ndarray, weights: np.ndarray) -> int:
     """
     Find the most representative movie from a list of movies based on weighted total cosine similarity.
     Args:
@@ -45,7 +45,7 @@ def find_representative_movie(movies: np.ndarray, weights: list[float]) -> int:
     return representative_index
 
 def recommend_movies(
-        user_movies: np.ndarray, weights: list[float], user_movie_ids: set[str], 
+        user_movies: np.ndarray, weights: np.ndarray, user_movie_ids: set[str], 
         all_movies: np.ndarray, all_movie_ids: list[str], k: int = 10
         ) -> dict[str, float]:
     """

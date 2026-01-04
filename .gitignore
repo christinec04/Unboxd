@@ -2,9 +2,6 @@
 **/.venv/
 **/__pycache__/
 **/.DS_Store
-backend/data/movies.csv
-backend/data/trending_movies.csv
-backend/data/movie_dataset
-backend/data/preprocessed_movies.csv
-backend/data/ratings
-backend/data/merged_ratings
+# exclude all data except the split, initialized movies dataset
+backend/data/
+!backend/data/movies/

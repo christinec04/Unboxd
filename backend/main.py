@@ -1,6 +1,4 @@
 import uvicorn
-import pandas as pd
-import numpy as np
 import requests
 from ast import literal_eval
 from fastapi import FastAPI, BackgroundTasks, HTTPException
@@ -14,20 +12,12 @@ from helpers.recommender import recommend_movies
 from helpers.merge_ratings import obtain_ids_and_weights
 from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
 
+# min: ii
+# max: aqwqweqweqweqwe
+
 scraper_lock = Lock()
-status: dict[str, Status] = dict()
+status: dict[str, tuple[Status, int]] = dict()
 recommendations: dict[str, list[Movie]] = dict()
-
-movies = pd.read_csv(Path.MOVIES)
-trending_movies = pd.read_csv(Path.MERGED_TRENDING_MOVIES)
-
-complete_preprocessed_trending_movies = pd.read_csv(Path.PREPROCESSED_TRENDING_MOVIES)
-indexed_preprocessed_trending_movies = complete_preprocessed_trending_movies.drop(columns=["imdb_id"]).to_numpy()
-preprocessed_trending_movies = np.delete(arr=indexed_preprocessed_trending_movies, obj=0, axis=1)
-preprocessed_trending_movies_ids = complete_preprocessed_trending_movies["imdb_id"].to_list()
-
-trailers = pd.read_csv(Path.TRENDING_MOVIE_TRAILERS)
-trailer_ids = set(trailers["imdb_id"].values)
 
 app = FastAPI()
 origins = [
