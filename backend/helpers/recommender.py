@@ -14,6 +14,16 @@ def cosine_similarity(movie1: np.ndarray, movie2: np.ndarray) -> float:
     similarity = sklearn_cosine_similarity(movie1.reshape(1, -1), movie2.reshape(1, -1))    
     return similarity[0][0]
 
+def precompute_similarity_matrix(all_movies: np.ndarray) ->np.ndarray:
+     """
+     Precompute the cosine similarity matrix for all movies.
+     Args:
+        `all_movies`: Feature vectors of all movies in the database.
+    Returns:
+        A matrix where element [i,j] contains the cosine similarity between movie i and movie j.
+     """
+     return sklearn_cosine_similarity(all_movies)
+
 def find_representative_movie(movies: np.ndarray, weights: list[float]) -> int:
     """
     Find the most representative movie from a list of movies based on weighted total cosine similarity.
@@ -46,12 +56,13 @@ def find_representative_movie(movies: np.ndarray, weights: list[float]) -> int:
 
 def recommend_movies(
         user_movies: np.ndarray, weights: list[float], user_movie_ids: set[str], 
-        all_movies: np.ndarray, all_movie_ids: list[str], k: int = 10
+        all_movies: np.ndarray, all_movie_ids: list[str], k: int = 10,
+        similarity_matrix: np.ndarray = None
         ) -> dict[str, float]:
     """
     Generates up to `k` movie recommendations by first finding a representative movie
     from user activity and then performing a k-NN search against the 
-    full movie database.
+    full movie database using cosine similarity.
     Args:
         `user_movies`: Feature vectors for movies used to build the profile.
         `weights`: Weights used to bias the representative profile selection.
@@ -59,33 +70,35 @@ def recommend_movies(
         `all_movies`: Feature vectors of the full search space.
         `all_movies_ids`: IDs of the movies in the search space.
         `k`: The number of neighbors (recommendations) to return.
+        `similarity_matrix`: Precomputed cosine similarity matrix
     Returns:
-        A list of (movie id, similarity score) tuples for the top `k` recommendations.
+        A dictionary of {movie_id, similarity_score} for the top `k` recommendations.
     """
+    # Find the representative movie from user's watched movies
     representative_index = find_representative_movie(user_movies, weights)
-    # Retrieve feature vector of the representative movie
     representative_vector = user_movies[representative_index]
 
-    # Reshape the representative movie's feature vector for sklearn's euclidian_distances function
-    representative_vector_reshaped = representative_vector.reshape(1, -1)
-    # Calculate Euclidian distance between the representative movie and all movie feature vectors
-    distances = euclidean_distances(representative_vector_reshaped, all_movies)[0]
+    # Calculate cosine similarities between representative movie and all movies
+    if similarity_matrix is None:
+         similarities = sklearn_cosine_similarity(representative_vector.reshape(1, -1), all_movies)[0]
+    else:
+         similarities = sklearn_cosine_similarity(representative_vector.reshape(1, -1), all_movies)[0]
+    
+    # Combine movie IDs with their similarity scores
+    movie_similarities = list(zip(similarities, all_movie_ids))
 
-    # Combine movie ID and distance
-    movie_distances = list(zip(distances, all_movie_ids))
+    # Sort by similarity (descending - highest similarity first)
+    movie_similarities.sort(reverse=True)
 
-    # Sort by distance (ascending)
-    movie_distances.sort()
-
+    # Build recommendations dictionary, excluding already-watched movies
     recommendations = {}
-    for distance, movie_id in movie_distances:
-            # Translate Euclidian distance to a similarity score
-            similarity_score = 1 / (1 + distance)
-
-            # Ensure the movie hasn't been watched
-            if movie_id not in user_movie_ids:
-                    recommendations[movie_id] = similarity_score
-
-            if len(recommendations) >= k:
-                    break
+    for similarity_score, movie_id in movie_similarities:
+        # Skip movies the user has already watched
+        if movie_id not in user_movie_ids:
+            recommendations[movie_id] = similarity_score
+        
+        # Stop once k is reached
+        if len(recommendations) >= k:
+            break
+    
     return recommendations

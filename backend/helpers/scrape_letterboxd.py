@@ -21,7 +21,7 @@ def scrape_ratings(username: str, print_status: bool = False) -> pd.DataFrame:
         except requests.exceptions.RequestException as e:
             # choosing not to retry to limit number of requests 
             if print_status: print(f"failed to get {page_url} because {e}")
-            continue
+            break
         html = response.text
         soup = bs4.BeautifulSoup(markup=html, features="html.parser")
         films = soup.find_all(name="li", class_="griditem")
