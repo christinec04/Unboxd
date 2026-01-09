@@ -7,13 +7,13 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException
 from http import HTTPStatus
 from fastapi.middleware.cors import CORSMiddleware
 from threading import Lock
-from helpers.paths import Path
-from helpers.models import UsernameRequest, Status, Movie
-from helpers.scrape_letterboxd import scrape_ratings, scrape_pfp_url
-from helpers.recommender import recommend_movies
-from helpers.merge_ratings import obtain_ids_and_weights
-from helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
-from helpers.test import dummy_data
+from .helpers.paths import Path
+from .helpers.models import UsernameRequest, Status, Movie
+from .helpers.scrape_letterboxd import scrape_ratings, scrape_pfp_url
+from .helpers.recommender import recommend_movies
+from .helpers.merge_ratings import obtain_ids_and_weights
+from .helpers.retrieve_preprocessed import retrieve_data, retrieve_preprocessed_data
+from .helpers.test import dummy_data
 
 scraper_lock = Lock()
 status: dict[str, Status] = dict()
